@@ -1,0 +1,60 @@
+@model List<AAUP_LabMaster.Models.Booking>
+@{
+    ViewData["Title"] = "Booking Management";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+<!--Header-->
+<header class="bg-[#9B0B0B] text-white p-4 flex justify-between items-center">
+<h1 class="text-xl font-bold">AAUP_LabMaster</h1>
+<nav>
+   <a href="/Home/Index" class="px-4 hover:underline">Home</a>
+   <a href="/Account/Login" class="px-4 hover:underline">Logout</a>
+</nav>
+</header>
+<div class="p-6">
+<h2 class="text-2xl font-bold mb-4">All Lab Bookings</h2>
+@if(!Model.Any())
+{
+  <p class="text-gray-700">No Bookings Available.</p>
+}
+else {
+  <table class="table-auto w-full text-left border-collapse">
+   <thead>
+  <tr class="bg-gray-200">
+  <th class="px-4 py-2">User</th>
+  <th class="px-4 py-2">Lab</th>
+  <th class="px-4 py-2">Date</th>
+  <th class="px-4 py-2">Time</th>
+  <th class="px-4 py-2">Description</th>
+  <th class="px-4 py-2">Action</th>
+  </tr>
+   </thead>
+<tbody>
+ @foreach (var booking in Model){
+   <tr class="border-b">
+  <td class="px-4 py-2">@booking.Client.FullName</td>
+                            <td class="px-4 py-2">@booking.Equipment.Lab.Name</td>
+  <td class="px-4 py-2">@booking.Date.ToShortDateString()</td>
+                            <td class="px-4 py-2">@booking.Date.TimeOfDay</td>
+  <td class="px-4 py-2">@booking.Description</td>
+  <td class="px-4 py-2">
+  <a href="/Admin/EditBooking/@booking.Id" class="text-blue-500 hover:underline">Edit</a> |
+  <a href="/Admin/DeleteBooking/@booking.Id" class="text-blue-500 hover:underline">Delete</a>
+  </td>
+  </tr> 
+ }
+
+
+</tbody>
+</table>
+}
+</div>
+</body>
+</html>

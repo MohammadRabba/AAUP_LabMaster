@@ -1,0 +1,67 @@
+@model AAUP_LabMaster.Models.User
+@{
+    ViewData["Title"] = "UserDashboard";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>User Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+<!--Header-->
+<header class="bg-[#9B0B0B] text-white p-4 flex justify-between items-center">
+<h1 class="text-xl font-bold">AAUP_LabMaster</h1>
+<nav>
+   <a href="/Home/Index" class="px-4 hover:underline">Home</a>
+   <a href="/Account/Login" class="px-4 hover:underline">Logout</a>
+</nav>
+</header>
+
+<div class="max-w-4xl mx-auto mt-8 p-6 bg-white rounded shadow">
+<h1 class="text-2xl font-bold mb-4">Welcome, @Model.FullName</h1>
+<a href="/User/Notifications" class="inline-block mb-4 bg-green-700 text-white px-4 py-2 rounded hover:bg-green-900">View Notifications</a>
+
+        @if (Model.Role=="Supervisour")
+{
+ <div class="bg-white shadow p-4 rounded mb-4">
+            <h2 class="text-xl font-semibold mb-2">Lab Supervisor Panel</h2>
+            <ul class="list-disc list-inside text-gray-700">
+                <li><a href="/User/Equipment">Manage equipment details</a></li>
+                <li><a href="/User/Requests">Review Lab Requests</a></li>
+            </ul>
+        </div>
+}
+        else if (Model.Role == "Client")
+{  
+    <div class="bg-white shadow p-4 rounded mb-4">
+            <h2 class="text-xl font-semibold mb-2">Client Tasks</h2>
+            <ul class="list-disc list-inside text-gray-700">
+                <li><a href="/User/RequestLab" class="text-blue-500 hover:underline">Request Lab Booking</a></li>
+                <li><a href="/User/MyRequests" class="text-blue-500 hover:underline">View Requests</a></li>
+                <li><a href="/User/ViewAvailableEquipments" class="text-blue-500 hover:underline">View Available Equipments</a></li>
+            </ul>
+        </div>
+}
+        else if (Model.Role == "Guest")
+{    
+     <div class="bg-white shadow p-4 rounded mb-4">
+            <h2 class="text-xl font-semibold mb-2">Guest Info</h2>
+            <p class="text-gray-700">You can View available lab and request an account for access.</p>
+            <a class="text-blue-600 underline" href="/Home/Labs">Browse Labs</a>
+        </div>
+}
+else
+{
+    <p class="text-gray-700">Error: No user data available.</p>
+}
+</div>
+<!-- Footer-->
+ <footer class="bg-[#9B0B0B] text-white text-center py-4 mt-10">
+    <p>&copy; 2025 AAUP_LabMaster | labs@aaup.edu</p>
+ </footer>
+</body>
+</html>

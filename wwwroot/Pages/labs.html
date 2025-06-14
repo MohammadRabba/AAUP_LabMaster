@@ -1,0 +1,86 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discover AAUP Labs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-white">
+
+    <!-- Header -->
+    <header class="bg-[#8B0000] text-white text-center text-lg font-normal py-2">
+        Discover AAUP labs
+    </header>
+
+    <!-- Navbar -->
+    <nav class="flex justify-between items-center px-4 py-3 bg-white">
+        <div class="flex items-center space-x-3">
+            <img alt="AAUP logo" src="SeniorImages/aaup full logo.png" width="250"/>
+        </div>
+        <div class="flex space-x-6 text-center text-xs text-black">
+            <div class="flex flex-col items-center cursor-pointer">
+                <i class="fas fa-user-clock text-2xl"></i>
+                <span class="mt-1">log in</span>
+            </div>
+            <div class="flex flex-col items-center cursor-pointer">
+                <i class="fas fa-user-plus text-2xl"></i>
+                <span class="mt-1">sign up</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="p-8">
+        <!-- Title -->
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold">Explore Our Labs</h2>
+            <p class="text-gray-700">Find the perfect lab for your needs.</p>
+        </div>
+
+        <!-- Search bar -->
+        <div class="mb-6">
+            <input type="text" placeholder="Search for labs..." class="border border-gray-300 rounded-lg p-2 w-full" />
+        </div>
+
+        <!-- Filter dropdown (categories to be filled dynamically) -->
+        <div class="flex justify-between mb-4">
+            <label class="text-gray-700">Filter by:</label>
+            <select class="border border-gray-300 rounded-lg p-2">
+                <!-- Categories will be loaded from DB -->
+                <option value="">Select a category</option>
+            </select>
+        </div>
+
+        <!-- Labs list (will be generated dynamically) -->
+        <ul id="lab-list" class="list-disc pl-5 space-y-4">
+            
+            <li>
+                <h3 class="text-lg font-semibold">Lab 1</h3>
+                <p class="text-gray-600">Computer Engineering Lab for research & practicals</p>
+                <a href="/User/RequestLab?labName=Lab%201" class="mt-2 bg-red-600 text-white rounded-lg p-2">View Lab</a>
+            </li>
+            <li>
+                <h3 class="text-lg font-semibold">Lab 2</h3>
+                <p class="text-gray-600">Networking Lab with modern equipment</p>
+                <a href="/User/RequestLab?labName=Lab%201" class="mt-2 bg-red-600 text-white rounded-lg p-2">View Lab</a>
+            </li>
+        </ul>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-200 p-4 text-center">
+        <p class="text-gray-600">Jenin - Palestine</p>
+        <p class="text-gray-600">+(970)123456789</p>
+        <p class="text-gray-600">labs@aaup.edu</p>
+    </footer>
+
+</body>
+</html>

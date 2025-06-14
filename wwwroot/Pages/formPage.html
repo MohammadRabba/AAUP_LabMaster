@@ -1,0 +1,120 @@
+<html dir="ltr" lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Lab Booking Form
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <style>
+   @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+  body {
+    font-family: 'Open Sans', sans-serif;
+  }
+  </style>
+ </head>
+ <img alt="AAUP campus" class="absolute inset-0 w-full h-full object-cover opacity-30 -z-10" src="SeniorImages/aaup campus.jfif"/>
+ <header class="bg-[#8B0000] flex items-center px-4 py-2">
+   <img alt="AAUP logo" class="h-10 w-auto" height="40" src="SeniorImages/aaup full logo.png" width="40"/>
+  </header>
+  <main class="flex-grow flex justify-center items-center px-4 py-10">
+    
+   <form id="bookingForm" method="post" action="/User/SubmitFullForm" class="bg-white p-8 max-w-md w-full rounded-sm shadow-md" autocomplete="off" novalidate>
+
+    <h2 class="text-green-700 font-bold text-lg mb-6">
+     Lab Booking Form
+    </h2>
+    <label class="block text-xs font-semibold mb-1 text-gray-700" for="lab">
+     Select Lab
+     <span class="text-red-600">
+      *
+     </span>
+    </label>
+    <select class="mb-4 block w-full rounded border border-gray-300 px-3 py-2 text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-green-700 focus:border-green-700" id="lab" name="lab" required="">
+     <option disabled="" selected="" value="">
+      Choose a lab...
+     </option>
+     <option>
+      Lab 1
+     </option>
+     <option>
+      Lab 2
+     </option>
+     <option>
+      Lab 3
+     </option>
+    </select>
+    <label class="block text-xs font-normal mb-1 text-gray-700" for="equipment">
+     Select Equipment (Optional)
+    </label>
+    <select class="mb-4 block w-full rounded border border-gray-300 px-3 py-2 text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-green-700 focus:border-green-700" id="equipment" name="equipment">
+     <option disabled="" selected="" value="">
+      Choose equipment...
+     </option>
+     <option>
+      Equipment 1
+     </option>
+     <option>
+      Equipment 2
+     </option>
+     <option>
+      Equipment 3
+     </option>
+    </select>
+    <label class="block text-xs font-normal mb-1 text-gray-700" for="datetime">
+     Date and Time
+    </label>
+    <input class="mb-4 block w-full rounded border border-gray-300 px-3 py-2 text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-green-700 focus:border-green-700" id="datetime" name="datetime" type="datetime-local"/>
+    <label class="block text-xs font-semibold mb-1 text-gray-700" for="purpose">
+     Purpose of Booking
+     <span class="text-red-600">
+      *
+     </span>
+    </label>
+    <input class="mb-4 block w-full rounded border border-gray-300 px-3 py-2 text-gray-400 text-sm focus:outline-none focus:ring-1 focus:ring-green-700 focus:border-green-700" id="purpose" name="purpose" placeholder="e.g., Research type or project purpose" required="" type="text"/>
+    <label class="block text-xs font-normal mb-1 text-gray-700" for="notes">
+     Additional Notes (Optional)
+    </label>
+    <textarea class="mb-4 block w-full rounded border border-gray-300 px-3 py-2 text-gray-400 text-sm resize-y focus:outline-none focus:ring-1 focus:ring-green-700 focus:border-green-700" id="notes" name="notes" placeholder="Any additional information..." rows="3"></textarea>
+    <div class="mb-4 flex items-center text-xs text-gray-700">
+     <input class="mr-2 w-4 h-4 text-green-700 border-gray-300 rounded focus:ring-green-700" id="terms" name="terms" required="" type="checkbox"/>
+     <label class="select-none" for="terms">
+      I agree to the terms and conditions
+      <span class="text-red-600">
+       *
+      </span>
+     </label>
+    </div>
+    <button class="w-full bg-gray-300 text-white font-semibold py-2 rounded cursor-not-allowed" disabled="" id="submitBtn" type="submit">
+     Submit
+    </button>
+   </form>
+  </main>
+  <script>
+   const form = document.getElementById('bookingForm');
+   const submitBtn = document.getElementById('submitBtn');
+
+   function validateForm() {
+     const lab = form.lab.value.trim();
+     const purpose = form.purpose.value.trim();
+     const terms = form.terms.checked;
+
+     if (lab !== "" && purpose !== "" && terms) {
+       submitBtn.disabled = false;
+       submitBtn.classList.remove('bg-gray-300', 'cursor-not-allowed');
+       submitBtn.classList.add('bg-green-700', 'cursor-pointer');
+     } else {
+       submitBtn.disabled = true;
+       submitBtn.classList.add('bg-gray-300', 'cursor-not-allowed');
+       submitBtn.classList.remove('bg-green-700', 'cursor-pointer');
+     }
+   }
+
+   form.lab.addEventListener('change', validateForm);
+   form.purpose.addEventListener('input', validateForm);
+   form.terms.addEventListener('change', validateForm);
+  </script>
+ </body>
+</html>

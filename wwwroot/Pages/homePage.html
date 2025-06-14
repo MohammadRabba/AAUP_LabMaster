@@ -1,0 +1,127 @@
+
+<html dir="ltr" lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+    Home
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <style>
+   @import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
+    body {
+      font-family: "Open Sans", sans-serif;
+    }
+  </style>
+ </head>
+ <body class="flex flex-col min-h-screen">
+
+
+  <header class="bg-[#8B0000] text-white text-center text-lg font-normal py-2">
+   Book Labs and Equipment at AAUP
+  </header>
+
+
+  <nav class="flex justify-between items-center px-4 py-3 bg-white">
+   <div class="flex items-center space-x-3">
+    <img alt="AAUP logo" src="SeniorImages/aaup full logo.png" width="250"/>
+   </div>
+   <div class="flex space-x-6 text-center text-xs text-black">
+    <div class="flex flex-col items-center cursor-pointer">
+     <i class="fas fa-user-clock text-2xl">
+     </i>
+     <span class="mt-1">
+      log in
+     </span>
+    </div>
+    <div class="flex flex-col items-center cursor-pointer">
+     <i class="fas fa-user-plus text-2xl">
+     </i>
+     <span class="mt-1">
+      sign up
+     </span>
+    </div>
+   </div>
+  </nav>
+
+
+  <main class="flex flex-col md:flex-row bg-[#f0f1ef]">
+    <section class="flex flex-col justify-center items-center px-6 py-8 md:w-1/2 max-w-md md:max-w-none">
+      <h2 class="text-[#3f5a00] font-bold text-xl mb-2">
+        AAUP Labs
+      </h2>
+      <h3 class="text-[#8b0000] font-extrabold text-2xl leading-tight">
+        مختبرات الجامعة العربية الأمريكية
+      </h3>
+    </section>
+    
+   <section class="md:w-1/2">
+    <img alt="AAUP buildings" class="w-full h-full object-cover" height="180" src="SeniorImages/aaup campus.jfif" width="600"/>
+   </section>
+  </main>
+
+
+  <section class="flex flex-col md:flex-row items-start justify-between px-6 py-6 max-w-5xl mx-auto w-full gap-6">
+   <p class="md:w-2/3 text-base text-black leading-relaxed">
+    Book an appointment to use AAUP labs and equipment easily and flexibly. Choose the appropriate lab, select your desired time, and
+    <a class="text-[#3f5a00] underline" href="#">
+     submit your request now.
+    </a>
+   </p>
+   <div class="flex flex-col w-full md:w-1/3 space-y-2">
+    <button class="bg-[#3f5a00] text-white text-base font-normal py-2 rounded-md hover:bg-[#2e3f00] transition" type="button">
+     Book now
+    </button>
+    <button class="bg-[#3f5a00] text-white text-base font-normal py-2 rounded-md hover:bg-[#2e3f00] transition" type="button">
+     Discover AAUP Labs
+    </button>
+    <button class="bg-[#3f5a00] text-white text-base font-normal py-2 rounded-md hover:bg-[#2e3f00] transition" type="button">
+     FAQ
+    </button>
+    <button class="bg-[#3f5a00] text-white text-base font-normal py-2 rounded-md hover:bg-[#2e3f00] transition" type="button">
+     Contact us
+    </button>
+   </div>
+  </section>
+
+
+  <section class="px-6 pb-6 max-w-5xl mx-auto w-full text-sm text-black">
+   <p>
+    <a class="text-[#3f5a00] underline" href="#">
+     Log in
+    </a>
+    to book an appointment or
+    <a class="text-[#3f5a00] underline" href="#">
+     sign up
+    </a>
+    if you don’t have an account.
+   </p>
+  </section>
+  <!-- Footer -->
+  <footer class="bg-[#8B0000] text-white flex justify-center md:justify-between items-center px-6 py-3 space-x-6 text-sm font-semibold">
+   <div class="flex items-center space-x-2">
+    <i class="fas fa-map-marker-alt text-lg">
+    </i>
+    <span>
+     Jenin - Palestine
+    </span>
+   </div>
+   <div class="flex items-center space-x-2">
+    <i class="fas fa-phone-alt text-lg">
+    </i>
+    <span>
+     +(970)123456789
+    </span>
+   </div>
+   <div class="flex items-center space-x-2">
+    <i class="fas fa-envelope text-lg">
+     </i>
+    <a class="underline hover:text-gray-300" href="mailto:labs@aaup.edu">
+     labs@aaup.edu
+    </a>
+   </div>
+  </footer>
+ </body>
+</html>

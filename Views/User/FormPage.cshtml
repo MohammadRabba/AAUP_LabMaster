@@ -1,0 +1,97 @@
+@{
+    ViewData["Title"] = "Lab Booking Form";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Lab Booking Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+<header class="bg-[#8B0000] text-white p-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold">AAUP_LabMaster</h1>
+    <nav>
+        <a href="/Home/Index" class="px-4 hover:underline">Home</a>
+        <a href="/Account/Login" class="px-4 hover:underline">Logout</a>
+    </nav>
+</header>
+
+<main class="flex justify-center py-10 px-4">
+    <form id="bookingForm" method="post" action="/User/SubmitFullForm"
+          class="bg-white p-8 max-w-md w-full rounded shadow-md" autocomplete="off">
+        
+        <h2 class="text-green-700 font-bold text-lg mb-6">Lab Booking Form</h2>
+
+        <label class="block text-sm font-medium mb-1">Select Lab <span class="text-red-600">*</span></label>
+        <select name="lab" class="mb-4 w-full border rounded px-3 py-2" required>
+            <option disabled selected value="">Choose a lab...</option>
+            <option>Lab 1</option>
+            <option>Lab 2</option>
+            <option>Lab 3</option>
+        </select>
+
+        <label class="block text-sm font-medium mb-1">Select Equipment (Optional)</label>
+        <select name="equipment" class="mb-4 w-full border rounded px-3 py-2">
+            <option disabled selected value="">Choose equipment...</option>
+            <option>Equipment 1</option>
+            <option>Equipment 2</option>
+            <option>Equipment 3</option>
+        </select>
+
+        <label class="block text-sm font-medium mb-1">Date and Time</label>
+        <input type="datetime-local" name="datetime" class="mb-4 w-full border rounded px-3 py-2" />
+
+        <label class="block text-sm font-medium mb-1">Purpose of Booking <span class="text-red-600">*</span></label>
+        <input name="purpose" type="text" class="mb-4 w-full border rounded px-3 py-2" placeholder="e.g., Research purpose" required />
+
+        <label class="block text-sm font-medium mb-1">Additional Notes (Optional)</label>
+        <textarea name="notes" rows="3" class="mb-4 w-full border rounded px-3 py-2" placeholder="Any additional information..."></textarea>
+
+        <div class="mb-4 flex items-center">
+            <input type="checkbox" name="terms" id="terms" class="mr-2" required />
+            <label for="terms" class="text-sm">I agree to the terms and conditions <span class="text-red-600">*</span></label>
+        </div>
+
+        <button type="submit" id="submitBtn" class="w-full bg-gray-300 text-white font-semibold py-2 rounded cursor-not-allowed" disabled>
+            Submit
+        </button>
+
+        <div class="mt-4">
+            <a href="/User/LabsPage" class="text-blue-600 underline text-sm">Skip and view labs</a>
+        </div>
+    </form>
+    
+</main>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById('bookingForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        function validateForm() {
+            const lab = form.lab.value.trim();
+            const purpose = form.purpose.value.trim();
+            const terms = form.terms.checked;
+
+            if (lab !== "" && purpose !== "" && terms) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('bg-gray-300', 'cursor-not-allowed');
+                submitBtn.classList.add('bg-green-700', 'cursor-pointer');
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('bg-gray-300', 'cursor-not-allowed');
+                submitBtn.classList.remove('bg-green-700', 'cursor-pointer');
+            }
+        }
+
+        form.lab.addEventListener('change', validateForm);
+        form.purpose.addEventListener('input', validateForm);
+        form.terms.addEventListener('change', validateForm);
+    });
+</script>
+
+</body>
+</html>

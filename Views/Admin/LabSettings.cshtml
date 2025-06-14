@@ -1,0 +1,57 @@
+@model List<AAUP_LabMaster.Models.Lab>
+
+@{
+    ViewData["Title"] = "Manage Labs";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <header class="bg-[#9B0B0B] text-white p-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold">AAUP_LabMaster</h1>
+        <nav>
+            <a href="/Home/Index" class="px-4 hover:underline">Home</a>
+            <a href="/Account/Login" class="px-4 hover:underline">Logout</a>
+        </nav>
+    </header>
+
+    <div class="p-6">
+        <h2 class="text-2xl font-bold mb-4">Manage Labs</h2>
+
+        <form asp-action="AddLab" method="post" class="mb-4">
+            <label class="block mb-2">New Lab Name:</label>
+            <input type="text" name="name" required class="border px-3 py-2 w-full mb-2" />
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Add Lab</button>
+        </form>
+
+        <table class="table-auto w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="px-4 py-2">Name</th>
+                    <th class="px-4 py-2">Status</th>
+                    <th class="px-4 py-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var lab in Model)
+                {
+                 <tr class="border-b">
+                  <td class="px-4 py-2">@lab.Name</td>
+                  @* <td class="px-4 py-2">@lab.Status</td> *@
+                <td class="px-4 py-2">
+                    <form asp-action="DeleteLab" method="post" class="inline">
+                        <input type="hidden" name="id" value="@lab.Id" />
+                        <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded">Delete</button>
+                    </form>
+                    <a asp-action="EditLab" asp-route-id="@lab.Id" class="bg-blue-500 text-white px-2 py-1 rounded ml-2">Edit</a>
+                </td>
+              </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

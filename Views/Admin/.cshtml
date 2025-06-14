@@ -1,0 +1,47 @@
+@model AAUP_LabMaster.Models.User
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-6">
+
+ <!--Header-->
+<header class="bg-[#9B0B0B] text-white p-4 flex justify-between items-center">
+<h1 class="text-xl font-bold">AAUP_LabMaster</h1>
+<nav>
+   <a href="/Home/Index" class="px-4 hover:underline">Home</a>
+   <a href="/Account/Login" class="px-4 hover:underline">Logout</a>
+</nav>
+</header>
+
+  <div class="max-w-4xl mx-auto mt-8 p-6 bg-white rounded shadow">
+    <h1 class="text-2xl font-bold mb-6">Welcome Administrator @Model.FullName!</h1>
+
+    
+    <a href="/Admin/BookingManagement" class="block hover:bg-gray-100 p-2 rounded transition">
+        <h2 class="text-xl font-semibold mb-2">Booking Management</h2>
+        <p class="text-gray-700">You can add new booking requests for lab & equipment. Modifying or canceling is not allowed.</p>
+    </a>
+
+    <a href="/Admin/UserManagement" class="block hover:bg-gray-100 p-2 rounded transition">
+        <h2 class="text-xl font-semibold mb-2">User Management</h2>
+        <p class="text-gray-700">Add, Edit, or remove users (students, researchers, etc...).</p>
+    </a>
+
+    <a href="/Admin/LabSettings" class="block hover:bg-gray-100 p-2 rounded transition">
+        <h2 class="text-xl font-semibold mb-2">Lab Settings</h2>
+        <p class="text-gray-700">Manage lab equipment and their maintenance status.</p>
+    </a>
+
+    <a href="/Admin/Reports" class="block hover:bg-gray-100 p-2 rounded transition">
+        <h2 class="text-xl font-semibold mb-2">Reports & Statistics</h2>
+        <p class="text-gray-700">View usage reports and statistics of lab resources.</p>
+    </a>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+@model AAUP_LabMaster.Models.LoginDTO
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gray-100">
+    <form asp-action="Login" method="post" class="bg-white p-6 w-full max-w-sm rounded shadow-md">
+        <h2 class="text-center font-extrabold text-lg mb-4">Login</h2>
+        @if (TempData["Message"] != null)
+        {
+            <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-3">@TempData["Message"]</div>
+        }
+        @if (!ViewData.ModelState.IsValid)
+        {
+            @* You can use asp-validation-summary="All" for a cleaner way to display all errors *@
+            <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-3 text-center">
+                <div asp-validation-summary="All"></div>
+            </div>
+            @* Or keep your foreach loop if you prefer that specific styling *@
+            @*
+            @foreach(var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-3 text-center">
+                    @error.ErrorMessage
+                </div>
+            }
+            *@
+        }
+        @if (TempData["LoginError"] != null)
+        {
+            <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-3 text-center">@TempData["LoginError"]</div>
+        }
+
+        <input asp-for="Email" type="email" placeholder="Email" required
+               class="w-full mb-3 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400" />
+        @* Add specific validation message for email *@
+        <span asp-validation-for="Email" class="text-red-500 text-xs"></span>
+
+        <input asp-for="Password" type="password" placeholder="Password" required
+               class="w-full mb-4 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400" />
+        @* Add specific validation message for password *@
+        <span asp-validation-for="Password" class="text-red-500 text-xs"></span>
+
+        <button type="submit" class="w-full bg-green-600 text-white font-semibold py-2 rounded hover:bg-green-700">
+            Login
+        </button>
+
+        <p class="mt-3 text-sm text-black text-center">
+            Don't have an account?
+            <a href="/Account/Signup" class="text-[#1DA94C] ml-1">Sign Up</a>
+        </p>
+    </form>
+</body>
+</html>
