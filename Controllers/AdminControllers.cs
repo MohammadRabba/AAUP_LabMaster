@@ -1,12 +1,16 @@
 using AAUP_LabMaster.EntityDTO;
 using AAUP_LabMaster.EntityManager;
 using AAUP_LabMaster.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Security.Claims;
 
 namespace AAUP_LabMaster.Controllers
 {
+    [Authorize(Roles = "Admin")]
+
     public class AdminController : 
     Controller
     {
@@ -16,10 +20,27 @@ namespace AAUP_LabMaster.Controllers
         {
             adminManager = context;
         }
+        public IActionResult AddUser()
+        {
+            return View(new UserDTO());
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddUser(UserDTO user)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(user);
+            }
+
+            adminManager.AddUser(user);
+            TempData["Message"] = "User added successfully.";
+            return RedirectToAction("UserManagement");
+        }
         public IActionResult Dashboard()
         {
-            var email = TempData["UserEmail"] as string;
+            var email = User.FindFirstValue(ClaimTypes.Email);
 
             if (string.IsNullOrEmpty(email))
                 return RedirectToAction("Login", "Account");
@@ -85,28 +106,24 @@ public IActionResult EditBooking()
         }
 
         [HttpPost]
-        public IActionResult AddLab(string labName,string Description, string supervisourName,List<string>Equepments)
+        public IActionResult AddLab(string labName, string Description, string supervisourName, string Equepments)
         {
-           
+            var equipmentList = string.IsNullOrWhiteSpace(Equepments)
+                ? new List<string>()
+                : Equepments.Split(',').Select(e => e.Trim()).Where(e => !string.IsNullOrEmpty(e)).ToList();
 
-
-        
             var lab = new LabDTO
-            {  
+            {
                 Name = labName,
-                Description= Description,
-                
-                //Status = "Available"
-                };
-            adminManager.AddLab(lab, supervisourName, Equepments);
+                Description = Description,
+            };
+            adminManager.AddLab(lab, supervisourName, equipmentList);
 
-           TempData["Message"] = "Lab added successfuly.";
+            TempData["Message"] = "Lab added successfully.";
 
-           return RedirectToAction("LabSettings");
+            return RedirectToAction("LabSettings");
+        }
 
-        } 
-        
-        
         public IActionResult DeleteLab(string id)
         {
             adminManager.RemoveLab(id);

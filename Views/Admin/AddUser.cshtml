@@ -1,0 +1,87 @@
+﻿@model AAUP_LabMaster.Models.UserDTO
+
+@{
+    ViewData["Title"] = "Add New User";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function toggleSpecialistField() {
+            var role = document.getElementById('SelectedRoleName').value;
+            var specialistDiv = document.getElementById('specialistDiv');
+            if (role === 'Supervisour') {
+                specialistDiv.style.display = 'block';
+            } else {
+                specialistDiv.style.display = 'none';
+                document.getElementById('Specialist').value = '';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            toggleSpecialistField();
+            document.getElementById('SelectedRoleName').addEventListener('change', toggleSpecialistField);
+        });
+    </script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <header class="bg-[#9B0B0B] text-white p-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold">AAUP_LabMaster</h1>
+        <nav>
+            <a href="/Home/Index" class="px-4 hover:underline">Home</a>
+            <a href="/Account/Login" class="px-4 hover:underline">Logout</a>
+        </nav>
+    </header>
+
+    <div class="max-w-lg mx-auto mt-8 p-6 bg-white rounded shadow">
+        <h2 class="text-2xl font-bold mb-6">Add New User</h2>
+        <form asp-action="AddUser" method="post" class="space-y-4">
+            <div>
+                <label asp-for="FullName" class="block mb-1 font-semibold"></label>
+                <input asp-for="FullName" class="border px-3 py-2 w-full rounded" />
+                <span asp-validation-for="FullName" class="text-red-600 text-sm"></span>
+            </div>
+            <div>
+                <label asp-for="Email" class="block mb-1 font-semibold"></label>
+                <input asp-for="Email" class="border px-3 py-2 w-full rounded" />
+                <span asp-validation-for="Email" class="text-red-600 text-sm"></span>
+            </div>
+            <div>
+                <label asp-for="PhoneNumber" class="block mb-1 font-semibold"></label>
+                <input asp-for="PhoneNumber" class="border px-3 py-2 w-full rounded" />
+                <span asp-validation-for="PhoneNumber" class="text-red-600 text-sm"></span>
+            </div>
+            <div>
+                <label asp-for="Password" class="block mb-1 font-semibold"></label>
+                <input asp-for="Password" type="password" class="border px-3 py-2 w-full rounded" />
+                <span asp-validation-for="Password" class="text-red-600 text-sm"></span>
+            </div>
+            <div>
+                <label asp-for="ConfirmPassword" class="block mb-1 font-semibold"></label>
+                <input asp-for="ConfirmPassword" type="password" class="border px-3 py-2 w-full rounded" />
+                <span asp-validation-for="ConfirmPassword" class="text-red-600 text-sm"></span>
+            </div>
+            <div>
+                <label asp-for="SelectedRoleName" class="block mb-1 font-semibold"></label>
+                <select asp-for="SelectedRoleName" id="SelectedRoleName" class="border px-3 py-2 w-full rounded">
+                    <option value="">-- Select Role --</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Client">Client</option>
+                    <option value="Supervisour">Supervisour</option>
+                </select>
+                <span asp-validation-for="SelectedRoleName" class="text-red-600 text-sm"></span>
+            </div>
+            <div id="specialistDiv" style="display:none;">
+                <label asp-for="Specialist" class="block mb-1 font-semibold"></label>
+                <input asp-for="Specialist" id="Specialist" class="border px-3 py-2 w-full rounded" />
+                <span asp-validation-for="Specialist" class="text-red-600 text-sm"></span>
+            </div>
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Add User</button>
+        </form>
+    </div>
+
+    <partial name="_ValidationScriptsPartial" />
+</body>
+</html>

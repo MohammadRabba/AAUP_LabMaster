@@ -1,6 +1,7 @@
 using AAUP_LabMaster.EntityManager;
 using AAUP_LabMaster.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<AccountManager>();
+builder.Services.AddScoped<AdminManager>();
+builder.Services.AddScoped<ClientManager>();
+builder.Services.AddScoped<NotificationManager>();
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {

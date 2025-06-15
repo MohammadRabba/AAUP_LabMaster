@@ -101,26 +101,59 @@ namespace AAUP_LabMaster.EntityManager
         }
         public void AddUser(UserDTO user)
         {
-            var doc = new User { FullName = user.FullName,Email=user.Email,Password=user.Password,PhoneNumber=user.PhoneNumber,Role=user.SelectedRoleName };
-
-            if (user.SelectedRoleName == "Admin")
+            User doc;
+            try
             {
-                context.Admins.Add((Admin)doc);
-            }else if (user.SelectedRoleName == "Client")
-            {
-                context.Clients.Add((Client)doc);
-            }
-            else
-            {
-                context.Supervisours.Add((Supervisour)doc);
-            }
+                if (user.SelectedRoleName == "Admin")
+                {
+                    doc = new Admin
+                    {
+                        FullName = user.FullName,
+                        Email = user.Email,
+                        Password = user.Password,
+                        PhoneNumber = user.PhoneNumber,
+                        Role = user.SelectedRoleName
+                    };
+                    context.Admins.Add((Admin)doc);
+                }
+                else if (user.SelectedRoleName == "Client")
+                {
+                    doc = new Client
+                    {
+                        FullName = user.FullName,
+                        Email = user.Email,
+                        Password = user.Password,
+                        PhoneNumber = user.PhoneNumber,
+                        Role = user.SelectedRoleName
+                    };
+                    context.Clients.Add((Client)doc);
+                }
+                else // Supervisour
+                {
+                    doc = new Supervisour
+                    {
+                        FullName = user.FullName,
+                        Email = user.Email,
+                        Password = user.Password,
+                        PhoneNumber = user.PhoneNumber,
+                        Role = user.SelectedRoleName,
+                        Specialist = user.Specialist // Make sure UserDTO has this property
+                    };
+                    context.Supervisours.Add((Supervisour)doc);
+                }
 
                 context.Users.Add(doc);
-            context.SaveChanges();
-            Console.WriteLine("User added successfully.");
+                context.SaveChanges();
+                Console.WriteLine("User added successfully.");
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error adding user: " + ex.Message);
+            }
         }
 
-        public void AddLab(LabDTO lab,string SupervisourName,List<string> equipments)
+public void AddLab(LabDTO lab,string SupervisourName,List<string> equipments)
         {
 
             

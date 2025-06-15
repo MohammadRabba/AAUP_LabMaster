@@ -1,9 +1,10 @@
 ﻿using AAUP_LabMaster.EntityManager;
-using AAUP_LabMaster.Models; 
+using AAUP_LabMaster.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+
 
 namespace AAUP_LabMaster.Controllers
 {
@@ -44,7 +45,6 @@ namespace AAUP_LabMaster.Controllers
         }
 
         [HttpGet]
-        [HttpGet]
         public IActionResult Login()
         {
             return View(new LoginDTO());
@@ -52,21 +52,29 @@ namespace AAUP_LabMaster.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginDTO user)
         {
-            var existingUser = accountManager.Login(user);
+            if (!ModelState.IsValid)
+            {
+                TempData["LoginError"] = "Please enter both email and password.";
+                return View(user);
+            }
+
+            User existingUser = accountManager.Login(user);
+
             if (existingUser != null)
             {
                 TempData["Message"] = $"Welcome back, {existingUser.FullName}!";
 
                 var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, existingUser.Id.ToString()),
-                    new Claim(ClaimTypes.Name, existingUser.FullName),
-                    new Claim(ClaimTypes.Email, existingUser.Email),
-                    new Claim(ClaimTypes.Role, existingUser.Role)
-                };
+        {
+            new Claim(ClaimTypes.NameIdentifier, existingUser.Id.ToString()),
+            new Claim(ClaimTypes.Name, existingUser.FullName ?? ""),
+            new Claim(ClaimTypes.Email, existingUser.Email ?? ""),
+            new Claim(ClaimTypes.Role, existingUser.Role ?? "")
+        };
 
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var principal = new ClaimsPrincipal(identity);
+
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
                 if (existingUser.Role == "Admin")
@@ -80,13 +88,13 @@ namespace AAUP_LabMaster.Controllers
                 else
                 {
                     TempData["LoginError"] = "Role not recognized.";
-                    return View("Login");
+                    return View("Login", user);
                 }
             }
-            TempData["LoginError"] = "Invalid email or password.";
-            return View("Login");
-        }
 
+            TempData["LoginError"] = "Invalid email or password.";
+            return View("Login", user);
+        }
         [HttpGet]
         public IActionResult AdminDashboard()
         {

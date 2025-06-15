@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AAUP_LabMaster.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250614152243_first")]
+    [Migration("20250615154249_first")]
     partial class first
     {
         /// <inheritdoc />

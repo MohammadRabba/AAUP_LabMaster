@@ -22,6 +22,8 @@ namespace AAUP_LabMaster.EntityManager
         }
         public bool Register(UserDTO user, out string message)
         {
+            User doc;
+
             var check = dbcontext.Users.FirstOrDefault(x => x.Email == user.Email);
             if (check != null)
             {
@@ -29,16 +31,47 @@ namespace AAUP_LabMaster.EntityManager
                 return false;  // فشل التسجيل
             }
 
-            var newUser = new User
+            if (user.SelectedRoleName == "Admin")
             {
-                Password = user.Password,
-                Email = user.Email,
-                FullName = user.FullName,
-                PhoneNumber = user.PhoneNumber,
-                Role = user.SelectedRoleName
-            };
+                doc = new Admin
+                {
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    Password = user.Password,
+                    PhoneNumber = user.PhoneNumber,
+                    Role = user.SelectedRoleName
+                };
+                dbcontext.Admins.Add((Admin)doc);
+            }
+            else if (user.SelectedRoleName == "Client")
+            {
+                doc = new Client
+                {
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    Password = user.Password,
+                    PhoneNumber = user.PhoneNumber,
+                    Role = user.SelectedRoleName,
+                    type = (Client.Type)user.type
+                };
+                dbcontext.Clients.Add((Client)doc);
+            }
+            else // Supervisour
+            {
+                doc = new Supervisour
+                {
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    Password = user.Password,
+                    PhoneNumber = user.PhoneNumber,
+                    Role = user.SelectedRoleName,
+                    Specialist = user.Specialist // Make sure UserDTO has this property
+                };
+                dbcontext.Supervisours.Add((Supervisour)doc);
+            }
 
-            dbcontext.Users.Add(newUser);
+            dbcontext.Users.Add(doc);
+            dbcontext.SaveChanges();
             dbcontext.SaveChanges();
 
             message = "User registered successfully!";
