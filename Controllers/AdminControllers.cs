@@ -24,7 +24,23 @@ namespace AAUP_LabMaster.Controllers
         {
             return View(new UserDTO());
         }
+        
+             public IActionResult UpdateUser()
+        {
+            return View(new UserDTO());
+        }
+        [HttpPut]
+        public IActionResult UpdateUser(UserDTO user)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(user);
+            }
 
+            adminManager.UpdateUser(user);
+            TempData["Message"] = "User added successfully.";
+            return RedirectToAction("UserManagement");
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult AddUser(UserDTO user)

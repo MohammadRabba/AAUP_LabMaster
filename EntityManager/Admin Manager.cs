@@ -152,8 +152,30 @@ namespace AAUP_LabMaster.EntityManager
                 Console.WriteLine("Error adding user: " + ex.Message);
             }
         }
+        public void UpdateUser(UserDTO user)
+        {
+            var newUser = context.Users.FirstOrDefault(x => x.Email == user.Email);
+            try
+            {
+            
 
-public void AddLab(LabDTO lab,string SupervisourName,List<string> equipments)
+                    newUser.FullName = user.FullName;
+                    newUser.Email = user.Email;
+                    newUser.Password = user.Password;
+                    newUser.PhoneNumber = user.PhoneNumber;
+                newUser.Role = user.SelectedRoleName;
+
+                context.SaveChanges();
+                Console.WriteLine("User Updated successfully.");
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error adding user: " + ex.Message);
+            }
+        }
+
+        public void AddLab(LabDTO lab,string SupervisourName,List<string> equipments)
         {
 
             
