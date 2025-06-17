@@ -79,17 +79,30 @@ namespace AAUP_LabMaster.EntityManager
                 Console.WriteLine("Error adding user: " + ex.Message);
             }
         }
+
+        public void RemoveUser(int id)
+        {
+            var user = context.Users.FirstOrDefault(u => u.Id == id);
+            if (user != null)
+            {
+                context.Users.Remove(user);
+                context.SaveChanges();
+            }
+        }
+
+        
+        
         public void UpdateUser(UserDTO user)
         {
             var newUser = context.Users.FirstOrDefault(x => x.Email == user.Email);
             try
             {
-            
 
-                    newUser.FullName = user.FullName;
-                    newUser.Email = user.Email;
-                    newUser.Password = user.Password;
-                    newUser.PhoneNumber = user.PhoneNumber;
+
+                newUser.FullName = user.FullName;
+                newUser.Email = user.Email;
+                newUser.Password = user.Password;
+                newUser.PhoneNumber = user.PhoneNumber;
                 newUser.Role = user.SelectedRoleName;
 
                 context.SaveChanges();

@@ -1,0 +1,61 @@
+@* @model AAUP_LabMaster.Models.UserDTO
+
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <a href="@Url.Action("UserManagement", "Admin")" 
+       class="inline-block mb-4 bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition">
+       Back to User List
+    </a>
+
+    <h2 class="text-2xl font-bold mb-4">Edit User</h2>
+    <form asp-action="UpdateUser" method="post">
+        <div class="mb-4">
+            <label for="FullName" class="block">Full Name</label>
+            <input type="text" name="FullName" value="@Model.FullName" class="w-full px-4 py-2 border rounded" required/>
+        </div>
+
+        <div class="mb-4">
+            <label for="Email" class="block">Email</label>
+            <input type="email" name="Email" value="@Model.Email" class="w-full px-4 py-2 border rounded" required/>
+        </div>
+
+        <div class="mb-4">
+            <label for="PhoneNumber" class="block">Phone Number</label>
+            <input type="text" name="PhoneNumber" value="@Model.PhoneNumber" class="w-full px-4 py-2 border rounded" required/>
+        </div>
+
+        <div class="mb-4">
+            <label for="Role" class="block">Role</label>
+            <select name="SelectedRoleName" class="w-full px-4 py-2 border rounded" required>
+                <option value="Admin" @(Model.SelectedRoleName == "Admin" ? "selected" : "")>Admin</option>
+                <option value="Client" @(Model.SelectedRoleName == "Client" ? "selected" : "")>Client</option>
+                <option value="Supervisour" @(Model.SelectedRoleName == "Supervisour" ? "selected" : "")>Supervisour</option>
+            </select>
+        </div>
+
+        @* (Optional) If the role is Supervisour, ask for Specialist @*
+        @if (Model.SelectedRoleName == "Supervisour")
+        {
+            <div class="mb-4">
+                <label for="Specialist" class="block">Specialist</label>
+                <input type="text" name="Specialist" value="@Model.Specialist" class="w-full px-4 py-2 border rounded"/>
+            </div>
+        }
+
+        <div class="mb-4">
+            <button type="submit" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                Save Changes
+            </button>
+        </div>
+    </form>
+</body>
+</html> *@

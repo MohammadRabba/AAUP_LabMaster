@@ -24,6 +24,19 @@ namespace AAUP_LabMaster.Controllers
             this.bookingManager = bookingManager;
             this.labManager = labManager;
         }
+        public IActionResult DeleteUser(int id)
+        {
+            // var user = adminManager.getUserById(id);
+            // if (user == null)
+            // {
+            //     return NotFound();
+            // }
+
+            adminManager.RemoveUser(id);
+            TempData["Message"] = "User deleted successfully.";
+            return RedirectToAction("UserManagement");
+        }
+
         public IActionResult AddUser()
         {
             return View(new UserDTO());
@@ -79,13 +92,35 @@ namespace AAUP_LabMaster.Controllers
             return View(bookings);
         }
 
-         [HttpGet]
-public IActionResult EditBooking()
-{
+        [HttpGet]
+        public IActionResult EditBooking()
+        {
 
 
-    return View();
-}
+            return View();
+        }
+
+        // public IActionResult UpdateUser(int id)
+        // {
+        //     var user = adminManager.getUserById(id); // يجب أن يكون لديك طريقة للوصول إلى المستخدم بواسطة الـ ID.
+        //     if (user == null)
+        //     {
+        //         return NotFound();
+        //     }
+
+        //     var userDTO = new UserDTO
+        //     {
+        //         FullName = user.FullName,
+        //         Email = user.Email,
+        //         PhoneNumber = user.PhoneNumber,
+        //         SelectedRoleName = user.Role,
+        //         Specialist = user.Specialist, // في حالة كانت هذه القيمة ضرورية
+        //         type = user.type // إذا كان النوع مهمًا.
+        //     };
+
+        //     return View(userDTO);
+        // }
+
 
         [HttpPut]
         public IActionResult EditBooking(int id, BookingDTO booking, string cientName, String EquepmentName)
