@@ -206,14 +206,6 @@ namespace AAUP_LabMaster.Migrations
                 {
                     b.HasBaseType("AAUP_LabMaster.Models.User");
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("type")
                         .HasColumnType("int");
 

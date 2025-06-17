@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AAUP_LabMaster.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250615154249_first")]
+    [Migration("20250615163358_first")]
     partial class first
     {
         /// <inheritdoc />
@@ -208,14 +208,6 @@ namespace AAUP_LabMaster.Migrations
             modelBuilder.Entity("AAUP_LabMaster.Models.Client", b =>
                 {
                     b.HasBaseType("AAUP_LabMaster.Models.User");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("type")
                         .HasColumnType("int");
