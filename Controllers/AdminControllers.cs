@@ -15,10 +15,14 @@ namespace AAUP_LabMaster.Controllers
     Controller
     {
         private readonly AdminManager adminManager;
+        private readonly BookingManager bookingManager;
+        private readonly LabManager labManager;
 
-        public AdminController(AdminManager context)
+        public AdminController(AdminManager context, BookingManager bookingManager, LabManager labManager)
         {
             adminManager = context;
+            this.bookingManager = bookingManager;
+            this.labManager = labManager;
         }
         public IActionResult AddUser()
         {
@@ -38,7 +42,7 @@ namespace AAUP_LabMaster.Controllers
             }
 
             adminManager.UpdateUser(user);
-            TempData["Message"] = "User added successfully.";
+            TempData["Message"] = "User Updated successfully.";
             return RedirectToAction("UserManagement");
         }
         [HttpPost]
@@ -71,7 +75,7 @@ namespace AAUP_LabMaster.Controllers
 
         public IActionResult BookingManagement()
         {
-            var bookings = adminManager.getAllBooking();
+            var bookings = bookingManager.getAllBooking();
             return View(bookings);
         }
 
@@ -86,7 +90,7 @@ public IActionResult EditBooking()
         [HttpPut]
         public IActionResult EditBooking(int id, BookingDTO booking, string cientName, String EquepmentName)
         {
-            var boking = adminManager.EditBooking(id, booking, cientName, EquepmentName);
+            var boking = bookingManager.EditBooking(id, booking, cientName, EquepmentName);
             if (boking == true)
             {
                 TempData["Message"] = "Booking Updated Successfully.";
@@ -103,7 +107,7 @@ public IActionResult EditBooking()
 
         public IActionResult DeleteBooking(int id)
 {   
-   var deleted=adminManager.RemoveBooking(id);
+   var deleted= bookingManager.RemoveBooking(id);
             if (deleted == false) { return NotFound(); }
     TempData["Message"] = "Booking deleted successfully.";
     return RedirectToAction("BookingManagement");
@@ -117,7 +121,7 @@ public IActionResult EditBooking()
 
         public IActionResult LabSettings()
         {
-           var labs = adminManager.getAllLabs();
+           var labs = labManager.getAllLabs();
             return View(labs);
         }
 
@@ -133,7 +137,7 @@ public IActionResult EditBooking()
                 Name = labName,
                 Description = Description,
             };
-            adminManager.AddLab(lab, supervisourName, equipmentList);
+            labManager.AddLab(lab, supervisourName, equipmentList);
 
             TempData["Message"] = "Lab added successfully.";
 
@@ -142,7 +146,7 @@ public IActionResult EditBooking()
 
         public IActionResult DeleteLab(string id)
         {
-            adminManager.RemoveLab(id);
+            labManager.RemoveLab(id);
 
             TempData["Message"] = "Lab deleted successfuly.";
            return RedirectToAction("LabSettings");
@@ -168,7 +172,7 @@ public IActionResult EditBooking()
 
                 //Status = "Available"
             };
-            var labs = adminManager.UpdateLab(id, lab);
+            var labs = labManager.UpdateLab(id, lab);
             if (labs == false)
                 return NotFound();
 
@@ -178,8 +182,8 @@ public IActionResult EditBooking()
 
         public IActionResult Reports()
         {  
-            var totalBookings =adminManager.getAllBooking().Count();
-            var mostUsed = adminManager.GetBookings();
+            var totalBookings = bookingManager.getAllBooking().Count();
+            var mostUsed = bookingManager.GetBookings();
 
                 ViewBag.TotalBookings = totalBookings;
                 ViewBag.MostUsedLab = mostUsed;

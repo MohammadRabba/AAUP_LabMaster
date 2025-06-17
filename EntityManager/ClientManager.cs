@@ -182,10 +182,7 @@ namespace AAUP_LabMaster.EntityManager
             }
             else if (equipment.status == Equipment.Availability.Available)
             {
-                if (equipment.Quantity == 1)
-                {
-                    equipment.Quantity -= 1;
-                    equipment.status = Equipment.Availability.nonAvailable;
+                
                     var book = new Booking
                     {
                         ClientId = context.Users.FirstOrDefault(u => u.Email == userEmailString)?.Id ?? 0,
@@ -206,37 +203,7 @@ namespace AAUP_LabMaster.EntityManager
                         $"Dear {userNameString}, your booking has been created."
                     );
                 }
-                else
-                {
-                    equipment.Quantity -= 1;
-                    var book = new Booking
-                    {
-                        ClientId = context.Users.FirstOrDefault(u => u.Email == userEmailString)?.Id ?? 0,
-                        EquipmentId = equipment.Id,
-                        Date = DateTime.Now,
-                        Equipment = equipment,
-                        Notes = note
-                    };
-                    context.Bookings.Add(book);
-                    context.SaveChanges();
-                    Console.WriteLine("Booking  created successfully.");
-
-                    var notificationManager = new NotificationManager();
-                    notificationManager.SendEmail(
-                        userEmailString,
-                        "Booking Confirmation",
-                        $"Dear {userNameString}, your booking has been created."
-                    );
-                }
-            }
-            else if (equipment.status == Equipment.Availability.nonAvailable)
-            {
-                Console.WriteLine($"Equipment '{equipmentName}' is currently not available for booking.");
-            }
-            else
-            {
-                Console.WriteLine($"Equipment '{equipmentName}' does not exist.");
-            }
+             
         }
     }
 }
