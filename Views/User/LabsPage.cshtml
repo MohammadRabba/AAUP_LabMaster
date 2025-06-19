@@ -1,6 +1,7 @@
 @model List<AAUP_LabMaster.Models.Lab>
 @{
     ViewData["Title"] = "Discover Labs";
+        Layout = "_UserLayout";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -13,20 +14,8 @@
 </head>
 
 <body class="bg-gray-100 min-h-screen">
-
-<!-- Header -->
-<header class="bg-[#9B0B0B] text-white p-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold">AAUP_LabMaster</h1>
-    <nav>
-        <a href="/Home/Index" class="px-4 hover:underline">Home</a>
-        <a href="/Account/Login" class="px-4 hover:underline">Logout</a>
-    </nav>
-</header>
-
-<header class="bg-[#8B0000] text-white text-center text-lg font-normal py-2">
-    Discover AAUP labs
-</header>
-
+ 
+ 
 <nav class="flex justify-between items-center px-4 py-3 bg-white">
     <div class="flex items-center space-x-3">
         <img src="/Image/aaup logo.png" alt="AAUP logo" class="h-14" />
@@ -62,11 +51,7 @@
         }
     </ul>
 </main>
-<footer class="bg-gray-200 p-4 text-center mt-8">
-    <p class="text-gray-600">Jenin - Palestine</p>
-    <p class="text-gray-600">+(970)123456789</p>
-    <p class="text-gray-600">labs@aaup.edu</p>
-</footer>
+ 
 
 </body>
 </html>

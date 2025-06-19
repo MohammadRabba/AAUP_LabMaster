@@ -1,5 +1,6 @@
 @{
     ViewData["Title"] = "Lab Booking Form";
+        Layout = "_UserLayout";
 }
 
 <!DOCTYPE html>
@@ -11,13 +12,7 @@
 </head>
 <body class="bg-gray-100 min-h-screen">
 
-<header class="bg-[#8B0000] text-white p-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold">AAUP_LabMaster</h1>
-    <nav>
-        <a href="/Home/Index" class="px-4 hover:underline">Home</a>
-        <a href="/Account/Login" class="px-4 hover:underline">Logout</a>
-    </nav>
-</header>
+ 
 
 <main class="flex justify-center py-10 px-4">
     <form id="bookingForm" method="post" action="/User/SubmitFullForm"

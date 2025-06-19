@@ -1,67 +1,240 @@
 @model AAUP_LabMaster.Models.User
 @{
     ViewData["Title"] = "Dashboard";
+        Layout = "_UserLayout";
 }
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <title>User Dashboard</title>
-<script src="https://cdn.tailwindcss.com"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard | AAUP_LabMaster</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+  </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-50 min-h-screen font-sans">
 
-<!--Header-->
-<header class="bg-[#9B0B0B] text-white p-4 flex justify-between items-center">
-<h1 class="text-xl font-bold">AAUP_LabMaster</h1>
-<nav>
-   <a href="/Home/Index" class="px-4 hover:underline">Home</a>
-   <a href="/Account/Login" class="px-4 hover:underline">Logout</a>
-</nav>
-</header>
+ 
+<!-- Main Content -->
+<main class="container mx-auto px-4 py-8">
+  <!-- Welcome Section -->
+  <div class="bg-white rounded-xl shadow-md overflow-hidden p-6 mb-8">
+    <div class="flex flex-col md:flex-row items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Welcome back, <span class="text-[#9B0B0B]">@Model.FullName</span>!</h1>
+        <p class="text-gray-600">Here's what's happening with your lab activities today.</p>
+      </div>
+      <div class="mt-4 md:mt-0">
+        <a href="/User/Notifications" class="inline-flex items-center bg-[#9B0B0B] hover:bg-[#7a0909] text-white px-6 py-3 rounded-lg transition duration-300 shadow">
+          <i class="fas fa-bell mr-2"></i> View Notifications
+          <span class="ml-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded-full">3 new</span>
+        </a>
+      </div>
+    </div>
+  </div>
 
-<div class="max-w-4xl mx-auto mt-8 p-6 bg-white rounded shadow">
-<h1 class="text-2xl font-bold mb-4">Welcome, @Model.FullName</h1>
-<a href="/User/Notifications" class="inline-block mb-4 bg-green-700 text-white px-4 py-2 rounded hover:bg-green-900">View Notifications</a>
-
-        @if (Model.Role=="Supervisour")
-{
- <div class="bg-white shadow p-4 rounded mb-4">
-            <h2 class="text-xl font-semibold mb-2">Lab Supervisor Panel</h2>
-            <ul class="list-disc list-inside text-gray-700">
-                <li><a href="/User/Equipment">Manage equipment details</a></li>
-                <li><a href="/User/Requests">Review Lab Requests</a></li>
-            </ul>
+  <!-- Role-Based Dashboard -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    @if (Model.Role == "Supervisour")
+    {
+      <!-- Supervisor Dashboard -->
+      <div class="dashboard-card bg-white rounded-xl shadow-md p-6 transition duration-300">
+        <div class="flex items-center mb-4">
+          <div class="bg-[#9B0B0B] text-white p-3 rounded-full mr-4">
+            <i class="fas fa-user-shield text-xl"></i>
+          </div>
+          <h2 class="text-2xl font-semibold text-gray-800">Supervisor Panel</h2>
         </div>
-}
-        else if (Model.Role == "Client")
-{  
-    <div class="bg-white shadow p-4 rounded mb-4">
-            <h2 class="text-xl font-semibold mb-2">Client Tasks</h2>
-            <ul class="list-disc list-inside text-gray-700">
-                <li><a href="/User/RequestLab" class="text-blue-500 hover:underline">Request Lab Booking</a></li>
-                <li><a href="/User/MyRequests" class="text-blue-500 hover:underline">View Requests</a></li>
-                <li><a href="/User/ViewAvailableEquipments" class="text-blue-500 hover:underline">View Available Equipments</a></li>
-            </ul>
+        <div class="space-y-4">
+          <a href="/User/Equipment" class="flex items-center p-3 hover:bg-gray-50 rounded-lg transition">
+            <div class="bg-blue-100 text-blue-600 p-2 rounded-full mr-3">
+              <i class="fas fa-microscope"></i>
+            </div>
+            <div>
+              <h3 class="font-medium text-gray-800">Manage Equipment</h3>
+              <p class="text-sm text-gray-500">Update lab equipment details</p>
+            </div>
+            <i class="fas fa-chevron-right ml-auto text-gray-400"></i>
+          </a>
+          <a href="/User/Requests" class="flex items-center p-3 hover:bg-gray-50 rounded-lg transition">
+            <div class="bg-green-100 text-green-600 p-2 rounded-full mr-3">
+              <i class="fas fa-clipboard-list"></i>
+            </div>
+            <div>
+              <h3 class="font-medium text-gray-800">Review Requests</h3>
+              <p class="text-sm text-gray-500">Approve or reject lab bookings</p>
+            </div>
+            <i class="fas fa-chevron-right ml-auto text-gray-400"></i>
+          </a>
         </div>
-}
-        else if (Model.Role == "Guest")
-{    
-     <div class="bg-white shadow p-4 rounded mb-4">
-            <h2 class="text-xl font-semibold mb-2">Guest Info</h2>
-            <p class="text-gray-700">You can View available lab and request an account for access.</p>
-            <a class="text-blue-600 underline" href="/Home/Labs">Browse Labs</a>
+      </div>
+      
+      <!-- Quick Stats -->
+      <div class="dashboard-card bg-white rounded-xl shadow-md p-6 transition duration-300">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Quick Stats</h2>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-blue-50 p-4 rounded-lg">
+            <div class="text-blue-600 mb-2">
+              <i class="fas fa-clock"></i>
+            </div>
+            <h3 class="font-bold text-gray-800">12</h3>
+            <p class="text-sm text-gray-600">Pending Requests</p>
+          </div>
+          <div class="bg-green-50 p-4 rounded-lg">
+            <div class="text-green-600 mb-2">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 class="font-bold text-gray-800">45</h3>
+            <p class="text-sm text-gray-600">Approved Requests</p>
+          </div>
+          <div class="bg-purple-50 p-4 rounded-lg">
+            <div class="text-purple-600 mb-2">
+              <i class="fas fa-microscope"></i>
+            </div>
+            <h3 class="font-bold text-gray-800">28</h3>
+            <p class="text-sm text-gray-600">Equipment Items</p>
+          </div>
+          <div class="bg-yellow-50 p-4 rounded-lg">
+            <div class="text-yellow-600 mb-2">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="font-bold text-gray-800">3</h3>
+            <p class="text-sm text-gray-600">Maintenance Needed</p>
+          </div>
         </div>
-}
-else
-{
-    <p class="text-gray-700">Error: No user data available.</p>
-}
-</div>
-<!-- Footer-->
- <footer class="bg-[#9B0B0B] text-white text-center py-4 mt-10">
-    <p>&copy; 2025 AAUP_LabMaster | labs@aaup.edu</p>
- </footer>
+      </div>
+    }
+    else if (Model.Role == "Client")
+    {
+      <!-- Client Dashboard -->
+      <div class="dashboard-card bg-white rounded-xl shadow-md p-6 transition duration-300">
+        <div class="flex items-center mb-4">
+          <div class="bg-[#9B0B0B] text-white p-3 rounded-full mr-4">
+            <i class="fas fa-user-graduate text-xl"></i>
+          </div>
+          <h2 class="text-2xl font-semibold text-gray-800">Client Portal</h2>
+        </div>
+        <div class="space-y-4">
+          <a href="/User/RequestLab" class="flex items-center p-3 hover:bg-gray-50 rounded-lg transition">
+            <div class="bg-blue-100 text-blue-600 p-2 rounded-full mr-3">
+              <i class="fas fa-calendar-plus"></i>
+            </div>
+            <div>
+              <h3 class="font-medium text-gray-800">Book a Lab</h3>
+              <p class="text-sm text-gray-500">Request new lab booking</p>
+            </div>
+            <i class="fas fa-chevron-right ml-auto text-gray-400"></i>
+          </a>
+          <a href="/User/MyRequests" class="flex items-center p-3 hover:bg-gray-50 rounded-lg transition">
+            <div class="bg-purple-100 text-purple-600 p-2 rounded-full mr-3">
+              <i class="fas fa-list-ul"></i>
+            </div>
+            <div>
+              <h3 class="font-medium text-gray-800">My Requests</h3>
+              <p class="text-sm text-gray-500">View your booking history</p>
+            </div>
+            <i class="fas fa-chevron-right ml-auto text-gray-400"></i>
+          </a>
+          <a href="/User/ViewAvailableEquipments" class="flex items-center p-3 hover:bg-gray-50 rounded-lg transition">
+            <div class="bg-green-100 text-green-600 p-2 rounded-full mr-3">
+              <i class="fas fa-microscope"></i>
+            </div>
+            <div>
+              <h3 class="font-medium text-gray-800">Equipment List</h3>
+              <p class="text-sm text-gray-500">View available lab equipment</p>
+            </div>
+            <i class="fas fa-chevron-right ml-auto text-gray-400"></i>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Recent Activity -->
+      <div class="dashboard-card bg-white rounded-xl shadow-md p-6 transition duration-300">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Recent Activity</h2>
+        <div class="space-y-4">
+          <div class="flex items-start border-b pb-4">
+            <div class="bg-green-100 text-green-600 p-2 rounded-full mr-3">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div>
+              <h3 class="font-medium text-gray-800">Request Approved</h3>
+              <p class="text-sm text-gray-600">Chemistry Lab - May 15, 2:00 PM</p>
+              <p class="text-xs text-gray-500 mt-1">2 days ago</p>
+            </div>
+          </div>
+          <div class="flex items-start border-b pb-4">
+            <div class="bg-yellow-100 text-yellow-600 p-2 rounded-full mr-3">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div>
+              <h3 class="font-medium text-gray-800">Request Pending</h3>
+              <p class="text-sm text-gray-600">Physics Lab - May 20, 10:00 AM</p>
+              <p class="text-xs text-gray-500 mt-1">Today</p>
+            </div>
+          </div>
+          <div class="flex items-start">
+            <div class="bg-blue-100 text-blue-600 p-2 rounded-full mr-3">
+              <i class="fas fa-microscope"></i>
+            </div>
+            <div>
+              <h3 class="font-medium text-gray-800">New Equipment</h3>
+              <p class="text-sm text-gray-600">5 new microscopes added</p>
+              <p class="text-xs text-gray-500 mt-1">1 week ago</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+    else if (Model.Role == "Guest")
+    {
+      <!-- Guest Dashboard -->
+      <div class="dashboard-card bg-white rounded-xl shadow-md p-6 transition duration-300 col-span-2">
+        <div class="flex items-center mb-6">
+          <div class="bg-[#9B0B0B] text-white p-3 rounded-full mr-4">
+            <i class="fas fa-user text-xl"></i>
+          </div>
+          <h2 class="text-2xl font-semibold text-gray-800">Guest Access</h2>
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="bg-blue-50 p-6 rounded-lg">
+            <h3 class="text-lg font-semibold text-gray-800 mb-3">Browse Available Labs</h3>
+            <p class="text-gray-600 mb-4">Explore our laboratory facilities and equipment available for research and academic purposes.</p>
+            <a href="/Home/Labs" class="inline-flex items-center bg-[#9B0B0B] hover:bg-[#7a0909] text-white px-4 py-2 rounded transition duration-300">
+              <i class="fas fa-search mr-2"></i> View Labs
+            </a>
+          </div>
+          <div class="bg-green-50 p-6 rounded-lg">
+            <h3 class="text-lg font-semibold text-gray-800 mb-3">Request Full Access</h3>
+            <p class="text-gray-600 mb-4">Apply for a client account to book labs and access additional features.</p>
+            <a href="/Account/Register" class="inline-flex items-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition duration-300">
+              <i class="fas fa-user-plus mr-2"></i> Apply Now
+            </a>
+          </div>
+        </div>
+      </div>
+    }
+    else
+    {
+      <div class="dashboard-card bg-white rounded-xl shadow-md p-6 transition duration-300 col-span-2">
+        <div class="text-center py-8">
+          <i class="fas fa-exclamation-triangle text-4xl text-yellow-500 mb-4"></i>
+          <h2 class="text-2xl font-semibold text-gray-800 mb-2">User Data Not Available</h2>
+          <p class="text-gray-600 mb-4">We couldn't retrieve your user information. Please try again or contact support.</p>
+          <a href="/Account/Login" class="inline-flex items-center bg-[#9B0B0B] hover:bg-[#7a0909] text-white px-6 py-2 rounded transition duration-300">
+            <i class="fas fa-sign-in-alt mr-2"></i> Login Again
+          </a>
+        </div>
+      </div>
+    }
+  </div>
+</main>
+ 
 </body>
 </html>

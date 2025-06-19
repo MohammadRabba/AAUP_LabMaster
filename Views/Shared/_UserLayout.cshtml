@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AAUP_LabMaster</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/AAUP_LabMaster.styles.css" asp-append-version="true" />
+</head>
+<body>
+   <header class="bg-[#9B0B0B] text-white p-4 shadow-lg">
+  <div class="container mx-auto flex justify-between items-center">
+    <div class="flex items-center space-x-3">
+      <i class="fas fa-flask text-2xl"></i>
+      <h1 class="text-2xl font-bold">AAUP_LabMaster</h1>
+    </div>
+    <nav class="flex items-center space-x-6">
+      <div class="relative group">
+        <a href="/User/Notifications" class="flex items-center space-x-1">
+          <i class="fas fa-bell"></i>
+          <span class="hidden md:inline">Notifications</span>
+        </a>
+        <span class="absolute -top-2 -right-2 bg-yellow-400 text-xs text-black rounded-full h-5 w-5 flex items-center justify-center">3</span>
+      </div>
+      <a href="/User/Dashboard" class="flex items-center space-x-1 px-3 py-1 bg-[#7a0909] rounded">
+        <i class="fas fa-home"></i>
+        <span class="hidden md:inline">Home</span>
+      </a>
+      <a href="/Account/Login" class="flex items-center space-x-1 hover:text-gray-300 transition">
+        <i class="fas fa-sign-out-alt"></i>
+        <span class="hidden md:inline">Logout</span>
+      </a>
+    </nav>
+  </div>
+</header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+<footer class="bg-[#9B0B0B] text-white text-center py-6 mt-12">
+  <div class="container mx-auto px-4">
+    <div class="flex justify-center space-x-6 mb-4">
+      <a href="#" class="hover:text-gray-300 transition duration-200">
+        <i class="fab fa-facebook-f"></i>
+      </a>
+      <a href="#" class="hover:text-gray-300 transition duration-200">
+        <i class="fab fa-twitter"></i>
+      </a>
+      <a href="#" class="hover:text-gray-300 transition duration-200">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </div>
+    <p class="mb-2">&copy; 2025 AAUP_LabMaster. All rights reserved.</p>
+    <p class="text-sm text-gray-300">lab@aaup.edu | +970 2 294 1999</p>
+  </div>
+</footer> 
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
