@@ -10,41 +10,83 @@
     <link rel="stylesheet" href="~/AAUP_LabMaster.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">AAUP_LabMaster</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+
+<header class="bg-[#9B0B0B] text-white p-3 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+        <!-- Add a link around the logo image to redirect to the homepage -->
+        <div class="flex items-center space-x-4">
+            <a href="/" class="flex items-center">
+                <img src="/Image/aaup logo.png" alt="AAUP Logo" class="h-12" />
+            </a>
+            <div>
+                <h1 class="text-2xl font-bold">AAUP LabMaster</h1>
+                <p class="text-sm opacity-80">Arab American University Labs</p>
+            </div>
+        </div>
+        
+        <nav class="flex items-center space-x-6">
+            <a href="/Account/Login" class="nav-item flex flex-col items-center text-sm hover:text-gray-200 transition-all duration-300">
+                <i class="fas fa-sign-in-alt text-xl mb-1"></i>
+                <span>Login</span>
+            </a>
+            <a href="/Account/Signup" class="nav-item flex flex-col items-center text-sm hover:text-gray-200 transition-all duration-300">
+                <i class="fas fa-user-plus text-xl mb-1"></i>
+                <span>Sign Up</span>
+            </a>
+        </nav>
+    </div>
+</header>
+
+<!-- Main content -->
+<div class="container">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
+
+<!-- Footer -->
+<footer class="bg-[#8B0000] text-white py-8">
+    <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <h3 class="text-xl font-bold mb-4">AAUP LabMaster</h3>
+                <p class="mb-4">The lab and equipment booking system at the Arab American University</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-white hover:text-gray-300 text-xl"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="text-white hover:text-gray-300 text-xl"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-white hover:text-gray-300 text-xl"><i class="fab fa-linkedin-in"></i></a>
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - AAUP_LabMaster - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            
+            <div>
+                <h3 class="text-xl font-bold mb-4">Contact Information</h3>
+                <ul class="space-y-2">
+                    <li class="flex items-start">
+                        <i class="fas fa-map-marker-alt mt-1 mr-2"></i>
+                        <span>Jenin, Palestine</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-phone-alt mt-1 mr-2"></i>
+                        <span>+970 123456789</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-envelope mt-1 mr-2"></i>
+                        <a href="mailto:labs@aaup.edu" class="hover:underline">labs@aaup.edu</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+        
+        <div class="border-t border-[#6d0000] mt-8 pt-6 text-center text-sm">
+            <p>&copy; 2023 AAUP LabMaster. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

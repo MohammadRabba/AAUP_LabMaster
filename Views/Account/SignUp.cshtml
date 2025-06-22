@@ -1,4 +1,8 @@
 @model AAUP_LabMaster.Models.UserDTO
+@{
+    ViewData["Title"] = "AAUP LabMaster";
+    Layout = "_Layout";
+}
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -33,17 +37,17 @@
     </script>
 </head>
 <body class="min-h-screen flex flex-col">
-    <header class="bg-[#9B0B0B] flex items-center px-4 py-3">
-        <img alt="AAUP logo" src="/Image/aaup full logo.png" width="250" />
+    <header class=" flex items-center px-4 py-3">
+        
     </header>
     <main class="flex-grow flex justify-center items-center p-4 relative overflow-hidden">
-        <img alt="AAUP campus" class="absolute inset-0 w-full h-full object-cover opacity-30" src="Image/aaup campus.png" />
+        @* <img alt="AAUP campus" class="absolute inset-0 w-full h-full object-cover opacity-30" src="Image/aaup campus.png" />
         @if (TempData["Message"] != null)
         {
             <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-3">
                 @TempData["Message"]
             </div>
-        }
+        } *@
         <form asp-action="Signup" method="post" class="bg-white p-6 w-full max-w-sm rounded-sm relative z-10">
             <h2 class="text-center font-extrabold text-lg mb-4">Signup</h2>
 
