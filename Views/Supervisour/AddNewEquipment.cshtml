@@ -1,17 +1,14 @@
-﻿@model AAUP_LabMaster.Models.Equipment
+﻿@model AAUP_LabMaster.EntityDTO.EquipmentDTO
 
 @{
     ViewData["Title"] = "Add New Equipment";
     var labs = ViewBag.Labs as List<AAUP_LabMaster.Models.Lab>;
 
-    // Defensive check: if labs is null, initialize it to an empty list to prevent NullReferenceException
     if (labs == null)
     {
         labs = new List<AAUP_LabMaster.Models.Lab>();
     }
 
-    // Determine if LabId is pre-set from the model (passed from controller)
-    // This implies the controller's GET action for AddNewEquipment received an 'id' from the route
     var isLabIdPreSet = Model != null && Model.LabId > 0;
     var preSetLabName = isLabIdPreSet ? labs.FirstOrDefault(l => l.Id == Model.LabId)?.Name : null;
 }
