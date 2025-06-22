@@ -128,7 +128,6 @@ namespace AAUP_LabMaster.EntityManager
             user.FullName = newuser.FullName;
             user.PhoneNumber = newuser.PhoneNumber;
 
-            // Assuming newuser.SelectedRoleName is a string with the new role name
             user.Role = newuser.SelectedRoleName;
 
             dbcontext.SaveChanges();

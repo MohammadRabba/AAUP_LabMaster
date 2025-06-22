@@ -18,12 +18,15 @@ namespace AAUP_LabMaster.EntityManager
         {
             return context.Equipments.FirstOrDefault(e => e.Id == id);
         }
-        public bool AddEquipment(Equipment equipment)
+        public Equipment AddEquipment(Equipment equipment)
         {
-            if (equipment == null) return false;
+            if (equipment.LabId == 0) // Basic validation if LabId is required
+            {
+                throw new ArgumentException("LabId must be provided for the equipment.");
+            }
             context.Equipments.Add(equipment);
             context.SaveChanges();
-            return true;
+            return equipment;
         }
         public bool UpdateEquipment(Equipment equipment)
         {
@@ -37,9 +40,9 @@ namespace AAUP_LabMaster.EntityManager
             context.SaveChanges();
             return true;
         }
-        public List<Equipment> GetEquipmentsByLabId(string labName)
+        public List<Equipment> GetEquipmentsByLabId(int labName)
         {
-            return context.Equipments.Where(e => e.Lab.Name == labName).ToList();
+            return context.Equipments.Where(e => e.Lab.Id == labName).ToList();
         }
         public bool DeleteEquipment(int id)
         {

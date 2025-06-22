@@ -81,7 +81,7 @@ namespace AAUP_LabMaster.Controllers
                 {
                     return RedirectToAction("Dashboard", "Admin");
                 }
-                else if (existingUser.Role == "Client" || existingUser.Role == "Guest" || existingUser.Role == "LabSupervisor")
+                else if (existingUser.Role == "Client" || existingUser.Role == "Guest" || existingUser.Role == "Supervisour")
                 {
                     return RedirectToAction("Dashboard", "User");
                 }

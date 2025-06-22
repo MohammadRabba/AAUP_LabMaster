@@ -14,6 +14,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<AccountManager>();
 builder.Services.AddScoped<AdminManager>();
 builder.Services.AddScoped<ClientManager>();
+builder.Services.AddScoped<LabManager>();
+builder.Services.AddScoped<SupervisourManager>();
+
+builder.Services.AddScoped<EquipmentManager>();
+builder.Services.AddScoped<BookingManager>();
 builder.Services.AddScoped<NotificationManager>();
 builder.Services.AddHttpContextAccessor();
 
@@ -43,7 +48,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-    name: "default",
+  name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

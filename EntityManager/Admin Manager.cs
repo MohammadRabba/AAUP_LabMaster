@@ -1,5 +1,6 @@
 ﻿using AAUP_LabMaster.EntityDTO;
 using AAUP_LabMaster.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Numerics;
 using static AAUP_LabMaster.Models.Equipment;
@@ -85,13 +86,25 @@ namespace AAUP_LabMaster.EntityManager
             var user = context.Users.FirstOrDefault(u => u.Id == id);
             if (user != null)
             {
+                if (user is Admin)
+                {
+                    context.Admins.Remove((Admin)user);
+                }
+                else if (user is Client)
+                {
+                    context.Clients.Remove((Client)user);
+                }
+                else if (user is Supervisour)
+                {
+                    context.Supervisours.Remove((Supervisour)user);
+                }
                 context.Users.Remove(user);
                 context.SaveChanges();
             }
         }
 
-        
-        
+
+      
         public void UpdateUser(UserDTO user)
         {
             var newUser = context.Users.FirstOrDefault(x => x.Email == user.Email);

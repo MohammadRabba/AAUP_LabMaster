@@ -3,6 +3,7 @@ using AAUP_LabMaster.EntityManager;
 using AAUP_LabMaster.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Security.Claims;
@@ -17,20 +18,20 @@ namespace AAUP_LabMaster.Controllers
         private readonly AdminManager adminManager;
         private readonly BookingManager bookingManager;
         private readonly LabManager labManager;
+        private readonly SupervisourManager superManager;
 
-        public AdminController(AdminManager context, BookingManager bookingManager, LabManager labManager)
+        public AdminController(AdminManager context, BookingManager bookingManager, LabManager labManager, SupervisourManager superManager)
         {
             adminManager = context;
             this.bookingManager = bookingManager;
             this.labManager = labManager;
+            this.superManager = superManager;
         }
+      
+
         public IActionResult DeleteUser(int id)
         {
-            // var user = adminManager.getUserById(id);
-            // if (user == null)
-            // {
-            //     return NotFound();
-            // }
+           
 
             adminManager.RemoveUser(id);
             TempData["Message"] = "User deleted successfully.";
@@ -100,27 +101,6 @@ namespace AAUP_LabMaster.Controllers
             return View();
         }
 
-        // public IActionResult UpdateUser(int id)
-        // {
-        //     var user = adminManager.getUserById(id); // يجب أن يكون لديك طريقة للوصول إلى المستخدم بواسطة الـ ID.
-        //     if (user == null)
-        //     {
-        //         return NotFound();
-        //     }
-
-        //     var userDTO = new UserDTO
-        //     {
-        //         FullName = user.FullName,
-        //         Email = user.Email,
-        //         PhoneNumber = user.PhoneNumber,
-        //         SelectedRoleName = user.Role,
-        //         Specialist = user.Specialist, // في حالة كانت هذه القيمة ضرورية
-        //         type = user.type // إذا كان النوع مهمًا.
-        //     };
-
-        //     return View(userDTO);
-        // }
-
 
         [HttpPut]
         public IActionResult EditBooking(int id, BookingDTO booking, string cientName, String EquepmentName)
@@ -153,67 +133,122 @@ namespace AAUP_LabMaster.Controllers
           var users = adminManager.getAllUsers();
             return View(users);
         }
-
         public IActionResult LabSettings()
         {
-           var labs = labManager.getAllLabs();
-            return View(labs);
+            var users = labManager.getAllLabs();
+            return View(users);
+        }
+        [HttpGet]
+        public IActionResult AddLab()
+        {
+            PopulateSupervisorsDropdown();
+            return View(new LabDTO());
+        }
+        [HttpPost]
+        public IActionResult AddLab(LabDTO labDto)
+        {
+            PopulateSupervisorsDropdown(); 
+
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Please correct the errors and try again.";
+                return View("AddLab", labDto);
+            }
+
+            try
+            {
+                labManager.AddLab(labDto);
+
+                TempData["Message"] = "Lab added successfully.";
+                return RedirectToAction("LabSettings");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error adding lab: {ex.Message}");
+                TempData["ErrorMessage"] = $"Error adding lab: {ex.Message}";
+                return View("AddLab", labDto); 
+            }
+        }
+
+        [HttpGet]
+        public IActionResult EditLab(int id)
+        {
+            var lab = labManager.GetLabById(id); 
+            if (lab == null)
+            {
+                return NotFound();
+            }
+
+            return View(lab); 
         }
 
         [HttpPost]
-        public IActionResult AddLab(string labName, string Description, string supervisourName, string Equepments)
+        [ValidateAntiForgeryToken]
+        public IActionResult EditLab(Lab lab, List<string> EquipmentNames) 
         {
-            var equipmentList = string.IsNullOrWhiteSpace(Equepments)
-                ? new List<string>()
-                : Equepments.Split(',').Select(e => e.Trim()).Where(e => !string.IsNullOrEmpty(e)).ToList();
 
-            var lab = new LabDTO
+            //if (EquipmentNames != null && EquipmentNames.Any(string.IsNullOrWhiteSpace))
+            //{
+            //    ModelState.AddModelError("EquipmentNames", "Equipment names cannot be empty.");
+            //}
+
+            if (!ModelState.IsValid)
             {
-                Name = labName,
-                Description = Description,
-            };
-            labManager.AddLab(lab, supervisourName, equipmentList);
+                TempData["ErrorMessage"] = "Please correct the errors and try again.";
+                return View(lab); 
+            }
 
-            TempData["Message"] = "Lab added successfully.";
+            try
+            {
+              
+                var labDto = new LabDTO
+                {
+                    Name = lab.Name,
+                    Description = lab.Description,
+                    SelectedSupervisorId = lab.Supervisour.FullName,
+                    EquipmentNames = EquipmentNames ?? new List<string>()
+                };
 
-            return RedirectToAction("LabSettings");
+                bool updateSuccess = labManager.UpdateLab(labDto);
+
+                if (!updateSuccess)
+                {
+                    TempData["ErrorMessage"] = "Failed to update lab. It might not exist or another error occurred.";
+                    return View(lab);
+                }
+
+                TempData["Message"] = "Lab updated successfully.";
+                return RedirectToAction("LabSettings");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating lab: {ex.Message}");
+                TempData["ErrorMessage"] = $"Error updating lab: {ex.Message}";
+                return View(lab);
+            }
         }
 
-        public IActionResult DeleteLab(string id)
+
+        private void PopulateSupervisorsDropdown(int? selectedId = null) 
+        {
+            ViewBag.SupervisorsList = superManager.GetAllSupervisours()
+                .Select(u => new SelectListItem
+                {
+                    Value = u.FullName,
+                    Text = u.FullName,
+                    Selected = (selectedId.HasValue && u.Id == selectedId.Value) 
+                })
+                .ToList();
+        }
+
+        public IActionResult DeleteLab(int id)
         {
             labManager.RemoveLab(id);
 
             TempData["Message"] = "Lab deleted successfuly.";
            return RedirectToAction("LabSettings");
-        } 
-          
-          
-        [HttpGet]
-        public IActionResult EditLab()
-        {
-           
-           
-           return View();
-        } 
+        }
 
-        [HttpPost]
-        public IActionResult EditLab(int id, string name, string desc)
-        {
-
-            var lab = new LabDTO
-            {
-                Name = name,
-                Description = desc,
-
-                //Status = "Available"
-            };
-            var labs = labManager.UpdateLab(id, lab);
-            if (labs == false)
-                return NotFound();
-
-           TempData["Message"] = "Lab updated successfuly.";
-           return RedirectToAction("LabSettings");
-        } 
 
         public IActionResult Reports()
         {  

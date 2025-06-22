@@ -8,10 +8,13 @@ namespace AAUP_LabMaster.Controllers
     public class UserController : Controller
     {
         private readonly ClientManager clientManager;
-
-        public UserController(ClientManager context)
+        private readonly SupervisourManager supervisourManager;
+        private readonly EquipmentManager equipmentManager;
+        private readonly LabManager labManager;
+        public UserController(ClientManager context, SupervisourManager supervisourManager)
         {
             clientManager = context;
+            this.supervisourManager = supervisourManager;
         }
 
         public IActionResult Dashboard()
@@ -109,7 +112,8 @@ namespace AAUP_LabMaster.Controllers
             var notifications = clientManager.GetMyNotifications();
             return View(notifications);
         }
-
+       
+        
         [HttpPost]
         public IActionResult MarkAsRead()
         {

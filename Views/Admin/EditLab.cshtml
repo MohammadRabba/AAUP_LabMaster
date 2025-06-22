@@ -2,32 +2,152 @@
 @{
     ViewData["Title"] = "Edit Lab";
 }
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-<script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    @* Include any custom CSS if you have it *@
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-100 min-h-screen font-sans">
 
-<!--Header-->
-<header class="bg-[#9B0B0B] text-white p-4 flex justify-between items-center">
-<h1 class="text-xl font-bold">AAUP_LabMaster</h1>
-<nav>
-   <a href="/Home/Index" class="px-4 hover:underline">Home</a>
-   <a href="/Account/Login" class="px-4 hover:underline">Logout</a>
-</nav>
-</header>
-<div class="p-6">
-<h2 class="text-2xl font-bold mb-4">Edit Lab</h2>
- <form asp-action="EditLab" method="post">
-   <input type="hidden" asp-for="Id"/>
+    <header class="bg-[#9B0B0B] text-white p-4 flex justify-between items-center shadow-md">
+        <h1 class="text-xl md:text-2xl font-bold">AAUP_LabMaster</h1>
+        <nav class="space-x-4">
+            <a href="/Home/Index" class="px-3 py-2 rounded-md hover:bg-white hover:bg-opacity-20 transition-colors duration-200">Home</a>
+            <a href="/Account/Login" class="px-3 py-2 rounded-md hover:bg-white hover:bg-opacity-20 transition-colors duration-200">Logout</a>
+        </nav>
+    </header>
 
-   <label class="block mb-2">Lab Name:</label>
-   <input asp-for="Name" class="border px-3 py-2 w-full mb-4"/>
-      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Update</button>
-      <a href="/Admin/LabSettings" class="ml-4 text-blue-600 hover:underline">Cancel</a>
- </form>
-</div>
+    <div class="min-h-screen bg-gradient-to-br from-gray-100 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl w-full space-y-8 p-10 bg-white/90 backdrop-blur rounded-xl shadow-xl border border-gray-200">
+
+            <h2 class="text-3xl font-extrabold text-gray-900 text-center">?? Edit Lab Details</h2>
+            <p class="text-sm text-center text-gray-600">
+                Update the name, description, and equipment for the lab below.
+            </p>
+
+            @if (TempData["Message"] != null)
+            {
+                <div class="bg-green-50 border border-green-400 text-green-700 p-3 rounded-md flex items-center gap-3">
+                    <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-4V9h2v5h-2zm0-6h2V7h-2v1z" clip-rule="evenodd" />
+                    </svg>
+                    <span>@TempData["Message"]</span>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="bg-red-50 border border-red-400 text-red-700 p-3 rounded-md flex items-center gap-3">
+                    <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-4V9h2v5h-2zm0-6h2V7h-2v1z" clip-rule="evenodd" />
+                    </svg>
+                    <span>@TempData["ErrorMessage"]</span>
+                </div>
+            }
+
+            <form asp-action="EditLab" method="post" class="space-y-6">
+                <input type="hidden" asp-for="Id" />
+                <div asp-validation-summary="ModelOnly" class="text-red-600 text-sm p-3 bg-red-50 border border-red-300 rounded-md"></div>
+
+                <div>
+                    <label asp-for="Name" class="block text-sm font-medium text-gray-700">Lab Name <span class="text-red-500">*</span></label>
+                    <input asp-for="Name" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="e.g., Physics Lab A" />
+                    <span asp-validation-for="Name" class="text-red-600 text-xs mt-1"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Description" class="block text-sm font-medium text-gray-700">Description</label>
+                    <textarea asp-for="Description" rows="4" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="e.g., Used for advanced research..."></textarea>
+                    <span asp-validation-for="Description" class="text-red-600 text-xs mt-1"></span>
+                </div>
+
+                @* Dynamic Equipment Input Section (remains the same) *@
+                <div class="border border-gray-200 p-4 rounded-lg bg-gray-50">
+                    <h3 class="text-md font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                        ??? Equipment List
+                        <span class="text-sm text-gray-500">(Add multiple)</span>
+                    </h3>
+                    <div id="equipment-inputs" class="space-y-3">
+                        @if (Model.Equipment != null && Model.Equipment.Any())
+                        {
+                            for (int i = 0; i < Model.Equipment.Count; i++)
+                            {
+                                <div class="flex items-center gap-3">
+                                    <input type="text" name="EquipmentNames[@i]" value="@Model.Equipment[i].Name" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="e.g., Beaker, Safety Goggles" />
+                                    <button type="button" onclick="removeEquipmentField(this)" class="text-red-500 hover:text-red-700">
+                                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 6h8v2H6V6zm0 4h8v2H6v-2z" clip-rule="evenodd" /></svg>
+                                    </button>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="flex items-center gap-3">
+                                <input type="text" name="EquipmentNames[0]" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="e.g., Beaker, Safety Goggles" />
+                                <button type="button" onclick="addEquipmentField()" class="text-blue-500 hover:text-blue-700">
+                                    <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                        }
+                    </div>
+                    <span asp-validation-for="Equipment" class="text-red-600 text-xs mt-1 block"></span>
+                </div>
+
+                <div class="flex justify-between mt-6">
+                    <a asp-action="LabSettings" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        ? Back to List
+                    </a>
+                    <button type="submit" class="inline-flex items-center px-6 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M11 5a1 1 0 10-2 0v3H6a1 1 0 100 2h3v3a1 1 0 102 0v-3h3a1 1 0 100-2h-3V5z" />
+                        </svg>
+                        Update Lab
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function addEquipmentField() {
+            var container = document.getElementById('equipment-inputs');
+            var inputCount = container.querySelectorAll('input[name^="EquipmentNames"]').length;
+            var newDiv = document.createElement('div');
+            newDiv.className = 'flex items-center gap-3 mt-2';
+            newDiv.innerHTML = `
+                <input type="text" name="EquipmentNames[${inputCount}]" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Equipment Name" />
+                <button type="button" onclick="removeEquipmentField(this)" class="text-red-500 hover:text-red-700">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 6h8v2H6V6zm0 4h8v2H6v-2z" clip-rule="evenodd"/></svg>
+                </button>`;
+            container.appendChild(newDiv);
+            updateEquipmentFieldNames();
+        }
+
+        function removeEquipmentField(button) {
+            button.parentNode.remove();
+            updateEquipmentFieldNames();
+        }
+
+        function updateEquipmentFieldNames() {
+            var inputs = document.querySelectorAll('#equipment-inputs input[name^="EquipmentNames"]');
+            inputs.forEach((input, index) => {
+                input.name = `EquipmentNames[${index}]`;
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', updateEquipmentFieldNames);
+    </script>
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
 </body>
 </html>

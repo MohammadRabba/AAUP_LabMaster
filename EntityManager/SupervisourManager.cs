@@ -23,6 +23,11 @@ namespace AAUP_LabMaster.EntityManager
         }
         public List<Supervisour> GetAllSupervisours()
         {
+            Console.WriteLine("Fetching all supervisors from the database.");
+            foreach (var supervisour in context.Supervisours)
+            {
+                Console.WriteLine($"Supervisour ID: {supervisour.Id}, Name: {supervisour.FullName}");
+            }
             return context.Supervisours.ToList();
         }
         public Supervisour? GetSupervisourById(int id)
@@ -41,6 +46,20 @@ namespace AAUP_LabMaster.EntityManager
             }
 
             return bookingManager.getBookingById(supervisorId);
+        }
+        public List<Lab> GetAllLabsbySupervisourId()
+        {
+            var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int supervisorId))
+            {
+                Console.WriteLine("Supervisor ID claim is missing or invalid.");
+                return new List<Lab>();
+            }
+            return context.Labs
+                .Include(l => l.Equipment)
+                .Where(l => l.SupervisorId == supervisorId)
+                .ToList();
         }
         public void ApproveBooking(int bookingId)
         {
