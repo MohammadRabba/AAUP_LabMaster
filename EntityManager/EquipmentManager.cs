@@ -35,6 +35,8 @@ namespace AAUP_LabMaster.EntityManager
             if (existingEquipment == null) return false;
             existingEquipment.Name = equipment.Name;
             existingEquipment.Description = equipment.Description;
+            existingEquipment.Quantity = equipment.Quantity;
+            existingEquipment.Price = equipment.Price;
             existingEquipment.status = equipment.status;
             existingEquipment.LabId = equipment.LabId;
             context.SaveChanges();

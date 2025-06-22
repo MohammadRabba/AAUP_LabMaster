@@ -3,6 +3,7 @@ using AAUP_LabMaster.EntityManager;
 using AAUP_LabMaster.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static AAUP_LabMaster.Models.Equipment;
 
 namespace AAUP_LabMaster.Controllers
 {
@@ -46,71 +47,110 @@ namespace AAUP_LabMaster.Controllers
         }
 
         [HttpGet]
-
-        public IActionResult AddNewEquipment()
+        public IActionResult AddNewEquipment(int? id) 
         {
-            return View(new Equipment());
-        }
-        [HttpGet]
-        public IActionResult AddNewEquipment(int? id) // 'id' from route, e.g., /Supervisour/AddNewEquipment/5
-        {
-            ViewBag.Labs = labManager.getAllLabs(); // Ensure labs are loaded for the dropdown
-
-            var model = new Equipment();
-            if (id.HasValue)
+            // --- FIX: ALWAYS ensure ViewBag.Labs is populated ---
+            ViewBag.Labs = labManager.getAllLabs();
+            if (ViewBag.Labs == null) // Defensive check, though getAllLabs should return empty list, not null
             {
-                // Optional: Verify lab exists
+                ViewBag.Labs = new List<AAUP_LabMaster.Models.Lab>();
+            }
+            // --- END FIX ---
+
+            var model = new EquipmentDTO();
+            if (id.HasValue && id.Value > 0) // Ensure id is valid
+            {
+                // Verify lab exists before setting the LabId in the model
                 var labExists = labManager.GetLabById(id.Value);
                 if (labExists != null)
                 {
-                    model.LabId = id.Value; // Set the LabId here for pre-selection
+                    model.LabId = id.Value; // Set the LabId for pre-selection
                 }
                 else
                 {
-                    TempData["ErrorMessage"] = $"The specified Lab (ID: {id.Value}) was not found.";
+                    TempData["ErrorMessage"] = $"The specified Lab (ID: {id.Value}) was not found. Please select a lab.";
                     // Do not set model.LabId if the ID is invalid, so the dropdown remains "-- Select Lab --"
                 }
             }
-            return View(model); // Pass the model (potentially with pre-selected LabId) to the view
+            return View(model); // Pass the model to the view
         }
 
-
-        [HttpPost]
-        // Fix 1: Corrected typo in action name to match Get action and form's asp-action.
-        // Fix 2: Removed redundant 'int LabId' parameter. Equipment model already contains LabId.
-        public IActionResult AddNewEquipment(Equipment equipment)
+        [HttpGet]
+        public IActionResult UpdateEquipment(int? id)
         {
-            // Fix 4a: Re-populate ViewBag.Labs if returning the view due to ModelState errors
-            ViewBag.Labs = labManager.getAllLabs();
+            ViewBag.Labs = labManager.getAllLabs() ?? new List<Lab>();
 
+            if (!id.HasValue || id <= 0)
+            {
+                TempData["ErrorMessage"] = "Invalid equipment ID.";
+                return RedirectToAction("Index");
+            }
+
+            var equipment = equipmentManager.GetEquipmentById(id.Value);
+            if (equipment == null)
+            {
+                TempData["ErrorMessage"] = $"Equipment with ID {id.Value} not found.";
+                return RedirectToAction("Index");
+            }
+
+            return View(equipment);
+        }
+        [HttpPost]
+        public IActionResult UpdateEquipment(Equipment equipment)
+        {
             if (!ModelState.IsValid)
             {
-                TempData["ErrorMessage"] = "Please correct the errors and try again.";
-                // Fix 4b: Return to the *same* view (AddNewEquipment) with the current 'equipment' model
-                return View("AddNewEquipment", equipment);
+                ViewBag.Labs = labManager.getAllLabs();
+                return View(equipment);
             }
 
             try
             {
-                // Fix 5: Ensure your AddEquipment method in EquipmentManager takes only 'Equipment'
-                // and the LabId is correctly set within the 'equipment' object.
-                var addedEquipment = equipmentManager.AddEquipment(equipment);
-
-                TempData["Message"] = "Equipment added successfully.";
-                // Fix 3: Redirect to GetEquipmentByLabId and pass the LabId
-                return RedirectToAction("GetEquipmentByLabId", new { id = addedEquipment.LabId });
+                equipmentManager.UpdateEquipment(equipment);
+                TempData["Message"] = "Equipment updated successfully!";
+                return RedirectToAction("GetEquipmentByLabId", new { id = equipment.LabId });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error adding equipment: {ex.Message}"); // Log the full error for debugging
-                TempData["ErrorMessage"] = $"Error adding equipment: {ex.Message}";
-                // Fix 4b: Return to the *same* view (AddNewEquipment) with the current 'equipment' model
-                // Make sure ViewBag.Labs is re-populated before returning here (done above).
-                return View("AddNewEquipment", equipment);
+                TempData["ErrorMessage"] = $"Error updating equipment: {ex.Message}";
+                ViewBag.Labs = labManager.getAllLabs();
+                return View(equipment);
             }
         }
 
-    
+        [HttpPost]
+        public IActionResult AddNewEquipment(EquipmentDTO equipment)
+        {
+            if (!ModelState.IsValid)
+            {
+                // قم بإعادة البيانات مع رسالة الخطأ
+                ViewBag.Labs = labManager.getAllLabs();
+                return View(equipment);
+            }
+
+            try
+            {
+                var equip = new Equipment
+                {
+                    Name = equipment.Name,
+                    Description = equipment.Description,
+                    Quantity = equipment.Quantity,
+                    Price = equipment.Price,
+                    LabId = equipment.LabId, // Ensure LabId is set correctly
+                    status = equipment.status // Assuming you want to set the default status to Available
+                };
+                var addedEquipment = equipmentManager.AddEquipment(equip); // عندك هذا الميثود
+                TempData["Message"] = "Equipment added successfully!";
+               return RedirectToAction("GetEquipmentByLabId", new { id = equipment.LabId });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error adding equipment: {ex.Message}";
+                ViewBag.Labs = labManager.getAllLabs();
+                return View(equipment);
+            }
+        }
+
         public List<Equipment> GetAllEquipments()
         {
             return equipmentManager.GetAllEquipments();
@@ -151,15 +191,60 @@ namespace AAUP_LabMaster.Controllers
             return View(equipmentList); // Pass the list of equipment as the model
         }
 
-        public IActionResult UpdateEquipment(Equipment equipment)
+
+        public IActionResult DeleteEquipment(int id) // Action name is DeleteEquipment, no need for ActionName attribute if matching route
         {
-            var updated= equipmentManager.UpdateEquipment(equipment);
-            return updated ? RedirectToAction("GetAllEquipments") : View("Error", "Failed to update equipment.");
+            int? labId = null;
+
+            try
+            {
+                var equipment = equipmentManager.GetEquipmentById(id);
+                if (equipment != null)
+                {
+                    labId = equipment.LabId;
+                }
+
+                var deleted = equipmentManager.DeleteEquipment(id);
+                if (deleted)
+                {
+                    TempData["Message"] = "Equipment deleted successfully.";
+                    if (labId.HasValue)
+                    {
+                        return RedirectToAction("GetEquipmentByLabId", new { id = labId.Value });
+                    }
+                    else
+                    {
+                        return RedirectToAction("GetAllEquipments");
+                    }
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Failed to delete equipment: Equipment not found or an error occurred.";
+                    // Redirect back to where they were trying to delete from
+                    if (labId.HasValue)
+                    {
+                        return RedirectToAction("GetEquipmentByLabId", new { id = labId.Value });
+                    }
+                    else
+                    {
+                        return RedirectToAction("GetAllEquipments");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting equipment (ID: {id}): {ex.Message}");
+                TempData["ErrorMessage"] = $"An error occurred while deleting equipment: {ex.Message}";
+                if (labId.HasValue)
+                {
+                    return RedirectToAction("GetEquipmentByLabId", new { id = labId.Value });
+                }
+                else
+                {
+                    return RedirectToAction("GetAllEquipments");
+                }
+            }
         }
-        public IActionResult DeleteEquipment(int id)
-        {
-           var deleted= equipmentManager.DeleteEquipment(id);
-            return deleted ? RedirectToAction("GetAllEquipments") : View("Error", "Failed to delete equipment.");
-        }
+
     }
 }

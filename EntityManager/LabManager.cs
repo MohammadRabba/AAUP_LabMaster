@@ -88,7 +88,8 @@ namespace AAUP_LabMaster.EntityManager
 
 
             // Equipment update logic
-            // 1. Filter the incoming equipment names from the DTO to remove any null, empty, or whitespace strings.
+            // 1. Filter the incoming equipment names from the
+            // to remove any null, empty, or whitespace strings.
             //var currentEquipmentNames = (labDto.EquipmentNames ?? new List<string>())
             //                                .Where(eName => !string.IsNullOrWhiteSpace(eName)) // CRITICAL: Filters out invalid names here
             //                                .ToList();
