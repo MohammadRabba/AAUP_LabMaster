@@ -1,7 +1,9 @@
 @model List<AAUP_LabMaster.Models.Booking>
 @{
+    Layout = "_AdminLayout";
     ViewData["Title"] = "Booking Management";
 }
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,13 +13,7 @@
 <body class="bg-gray-100 min-h-screen">
 
 <!--Header-->
-<header class="bg-[#9B0B0B] text-white p-4 flex justify-between items-center">
-<h1 class="text-xl font-bold">AAUP_LabMaster</h1>
-<nav>
-   <a href="/Home/Index" class="px-4 hover:underline">Home</a>
-   <a href="/Account/Login" class="px-4 hover:underline">Logout</a>
-</nav>
-</header>
+ 
 <div class="p-6">
 <h2 class="text-2xl font-bold mb-4">All Lab Bookings</h2>
 @if(!Model.Any())

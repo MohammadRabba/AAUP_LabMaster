@@ -1,67 +1,232 @@
 @model AAUP_LabMaster.Models.User
 @{
     ViewData["Title"] = "Dashboard";
+    Layout = "_UserLayout";
 }
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <title>User Dashboard</title>
-<script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8"/>
+    <title>User Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            600: '#2563eb',
+                            700: '#1d4ed8'
+                        },
+                        success: {
+                            600: '#16a34a',
+                            700: '#15803d'
+                        },
+                        warning: {
+                            600: '#d97706',
+                            700: '#b45309'
+                        }
+                    },
+                    boxShadow: {
+                        card: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'card-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-gray-100 min-h-screen">
-
-<!--Header-->
-<header class="bg-[#9B0B0B] text-white p-4 flex justify-between items-center">
-<h1 class="text-xl font-bold">AAUP_LabMaster</h1>
-<nav>
-   <a href="/Home/Index" class="px-4 hover:underline">Home</a>
-   <a href="/Account/Login" class="px-4 hover:underline">Logout</a>
-</nav>
-</header>
-
-<div class="max-w-4xl mx-auto mt-8 p-6 bg-white rounded shadow">
-<h1 class="text-2xl font-bold mb-4">Welcome, @Model.FullName</h1>
-<a href="/User/Notifications" class="inline-block mb-4 bg-green-700 text-white px-4 py-2 rounded hover:bg-green-900">View Notifications</a>
-
-        @if (Model.Role=="Supervisour")
-{
- <div class="bg-white shadow p-4 rounded mb-4">
-            <h2 class="text-xl font-semibold mb-2">Lab Supervisor Panel</h2>
-            <ul class="list-disc list-inside text-gray-700">
-                <li><a href="/User/LabsPage">Manage Labs details</a></li>
-                <li><a href="/User/Requests">Review Lab Requests</a></li>
-            </ul>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Welcome Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Welcome, <span class="text-primary-600">@Model.FullName</span></h1>
+                <p class="text-gray-600 mt-1">Here's what's happening today</p>
+            </div>
+            <a href="/User/Notifications" class="mt-4 md:mt-0 inline-flex items-center px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 transition-colors shadow-md">
+                <i class="fas fa-bell mr-2"></i>
+                View Notifications
+                <span class="ml-2 bg-white text-success-600 text-xs font-bold px-2 py-1 rounded-full">3 new</span>
+            </a>
         </div>
-}
-        else if (Model.Role == "Client")
-{  
-    <div class="bg-white shadow p-4 rounded mb-4">
-            <h2 class="text-xl font-semibold mb-2">Client Tasks</h2>
-            <ul class="list-disc list-inside text-gray-700">
-                <li><a href="/User/RequestLab" class="text-blue-500 hover:underline">Request Lab Booking</a></li>
-                <li><a href="/User/MyRequests" class="text-blue-500 hover:underline">View Requests</a></li>
-                <li><a href="/User/ViewAvailableEquipments" class="text-blue-500 hover:underline">View Available Equipments</a></li>
-            </ul>
+
+        <!-- Role-Specific Dashboard Content -->
+        <div class="space-y-6">
+            @if (Model.Role == "Supervisour")
+            {
+                <!-- Supervisor Dashboard -->
+                <div class="bg-white rounded-xl shadow-card overflow-hidden transition-all hover:shadow-card-hover">
+                    <div class="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4">
+                        <h2 class="text-xl font-semibold text-white flex items-center">
+                            <i class="fas fa-user-shield mr-2"></i>
+                            Lab Supervisor Panel
+                        </h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <a href="/User/LabsPage" class="group">
+                                <div class="border border-gray-200 rounded-lg p-5 hover:border-primary-600 transition-colors">
+                                    <div class="flex items-start space-x-4">
+                                        <div class="bg-primary-100 p-3 rounded-lg text-primary-600 group-hover:bg-primary-200 transition-colors">
+                                            <i class="fas fa-flask text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">Manage Labs</h3>
+                                            <p class="text-sm text-gray-600 mt-1">Update lab details, schedules, and configurations</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="/User/Requests" class="group">
+                                <div class="border border-gray-200 rounded-lg p-5 hover:border-primary-600 transition-colors">
+                                    <div class="flex items-start space-x-4">
+                                        <div class="bg-primary-100 p-3 rounded-lg text-primary-600 group-hover:bg-primary-200 transition-colors">
+                                            <i class="fas fa-clipboard-check text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">Review Requests</h3>
+                                            <p class="text-sm text-gray-600 mt-1">Approve or decline lab booking requests</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (Model.Role == "Client")
+            {
+                <!-- Client Dashboard -->
+                <div class="bg-white rounded-xl shadow-card overflow-hidden transition-all hover:shadow-card-hover">
+                    <div class="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4">
+                        <h2 class="text-xl font-semibold text-white flex items-center">
+                            <i class="fas fa-tasks mr-2"></i>
+                            Client Tasks
+                        </h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <a href="/User/RequestLab" class="group">
+                                <div class="border border-gray-200 rounded-lg p-5 hover:border-primary-600 transition-colors">
+                                    <div class="flex items-start space-x-4">
+                                        <div class="bg-primary-100 p-3 rounded-lg text-primary-600 group-hover:bg-primary-200 transition-colors">
+                                            <i class="fas fa-calendar-plus text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">Request Lab Booking</h3>
+                                            <p class="text-sm text-gray-600 mt-1">Schedule a new lab session</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="/User/MyRequests" class="group">
+                                <div class="border border-gray-200 rounded-lg p-5 hover:border-primary-600 transition-colors">
+                                    <div class="flex items-start space-x-4">
+                                        <div class="bg-primary-100 p-3 rounded-lg text-primary-600 group-hover:bg-primary-200 transition-colors">
+                                            <i class="fas fa-list-ul text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">My Requests</h3>
+                                            <p class="text-sm text-gray-600 mt-1">View your booking history and status</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="/User/ViewAvailableEquipments" class="group">
+                                <div class="border border-gray-200 rounded-lg p-5 hover:border-primary-600 transition-colors">
+                                    <div class="flex items-start space-x-4">
+                                        <div class="bg-primary-100 p-3 rounded-lg text-primary-600 group-hover:bg-primary-200 transition-colors">
+                                            <i class="fas fa-microscope text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">Available Equipment</h3>
+                                            <p class="text-sm text-gray-600 mt-1">Browse and check lab equipment availability</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (Model.Role == "Guest")
+            {
+                <!-- Guest Dashboard -->
+                <div class="bg-white rounded-xl shadow-card overflow-hidden">
+                    <div class="bg-gradient-to-r from-warning-600 to-warning-700 px-6 py-4">
+                        <h2 class="text-xl font-semibold text-white flex items-center">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            Guest Information
+                        </h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex flex-col md:flex-row items-start md:items-center justify-between">
+                            <div class="mb-4 md:mb-0">
+                                <p class="text-gray-700">As a guest, you can view available labs and request an account for full access.</p>
+                            </div>
+                            <a href="/Home/Labs" class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors shadow-md">
+                                <i class="fas fa-search mr-2"></i>
+                                Browse Labs
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <!-- Error State -->
+                <div class="bg-white rounded-xl shadow-card p-6 text-center">
+                    <div class="text-red-500 mb-4">
+                        <i class="fas fa-exclamation-triangle text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">No User Data Available</h3>
+                    <p class="text-gray-600">Please contact system administrator for assistance.</p>
+                </div>
+            }
+
+            <!-- Quick Stats Section (Optional) -->
+            @if (Model.Role == "Client" || Model.Role == "Supervisour")
+            {
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-xl shadow-card p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Upcoming Bookings</p>
+                                <h3 class="text-2xl font-bold text-gray-900 mt-1">5</h3>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-full text-green-600">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-card p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Pending Requests</p>
+                                <h3 class="text-2xl font-bold text-gray-900 mt-1">2</h3>
+                            </div>
+                            <div class="bg-yellow-100 p-3 rounded-full text-yellow-600">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-card p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Available Labs</p>
+                                <h3 class="text-2xl font-bold text-gray-900 mt-1">8</h3>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-full text-blue-600">
+                                <i class="fas fa-flask"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
-}
-        else if (Model.Role == "Guest")
-{    
-     <div class="bg-white shadow p-4 rounded mb-4">
-            <h2 class="text-xl font-semibold mb-2">Guest Info</h2>
-            <p class="text-gray-700">You can View available lab and request an account for access.</p>
-            <a class="text-blue-600 underline" href="/Home/Labs">Browse Labs</a>
-        </div>
-}
-else
-{
-    <p class="text-gray-700">Error: No user data available.</p>
-}
-</div>
-<!-- Footer-->
- <footer class="bg-[#9B0B0B] text-white text-center py-4 mt-10">
-    <p>&copy; 2025 AAUP_LabMaster | labs@aaup.edu</p>
- </footer>
+    </div>
 </body>
 </html>

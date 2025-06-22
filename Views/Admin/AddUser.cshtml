@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Add New User";
+    Layout = "_AdminLayout";
 }
 
 <!DOCTYPE html>
@@ -27,14 +28,7 @@
     </script>
 </head>
 <body class="bg-gray-100 min-h-screen">
-    <header class="bg-[#9B0B0B] text-white p-4 flex justify-between items-center">
-        <h1 class="text-xl font-bold">AAUP_LabMaster</h1>
-        <nav>
-            <a href="/Home/Index" class="px-4 hover:underline">Home</a>
-            <a href="/Account/Login" class="px-4 hover:underline">Logout</a>
-        </nav>
-    </header>
-
+    
     <div class="max-w-lg mx-auto mt-8 p-6 bg-white rounded shadow">
         <h2 class="text-2xl font-bold mb-6">Add New User</h2>
         <form asp-action="AddUser" method="post" class="space-y-4">
