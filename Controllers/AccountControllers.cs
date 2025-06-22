@@ -1,7 +1,9 @@
-﻿using AAUP_LabMaster.EntityManager;
+﻿using AAUP_LabMaster.EntityDTO;
+using AAUP_LabMaster.EntityManager;
 using AAUP_LabMaster.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -21,6 +23,75 @@ namespace AAUP_LabMaster.Controllers
         public IActionResult Signup()
         {
             return View(new UserDTO());
+        }
+        [HttpGet]
+        public IActionResult ResetPassword()
+        {
+            if (TempData["ResetEmail"] == null)
+            {
+                TempData["ErrorMessage"] = "Session expired. Please try again.";
+                return RedirectToAction("ForgotPassword");
+            }
+
+            var model = new ResetPasswordDTO
+            {
+                Email = TempData["ResetEmail"].ToString()
+            };
+
+            TempData.Keep("ResetEmail"); // keep it for post
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult ResetPassword(ResetPasswordDTO model)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData.Keep("ResetEmail");
+                return View(model);
+            }
+
+            var user = accountManager.GetUserByEmail(model.Email);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "User not found.";
+                return RedirectToAction("ForgotPassword");
+            }
+
+            // Update password
+            user.Password = model.NewPassword; // Hash in real apps!
+            accountManager.AddForgetPassword(user.Email,user.Password);
+
+            TempData["Message"] = "Password reset successfully. Please login.";
+            return RedirectToAction("Login");
+        }
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View(new ForgotPasswordDTO());
+        }
+        [HttpPost]
+        public IActionResult ForgotPassword(ForgotPasswordDTO model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = accountManager.ForgetPassword(model.FullName, model.Email, model.PhoneNumber);
+
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "User not found. Please check your information.";
+                return View(model);
+            }
+
+            // Store user ID or Email temporarily for use in reset page
+            TempData["ResetEmail"] = model.Email;
+
+            // إعادة التوجيه لصفحة إدخال كلمة المرور الجديدة
+            return RedirectToAction("ResetPassword");
         }
 
         [HttpPost]

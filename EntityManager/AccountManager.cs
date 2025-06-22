@@ -77,7 +77,28 @@ namespace AAUP_LabMaster.EntityManager
             message = "User registered successfully!";
             return true;
         }
-
+        public bool ForgetPassword(string email, string phoneMumber,string name)
+        {
+            var user = dbcontext.Users.FirstOrDefault(u => u.Email == email&&u.PhoneNumber==phoneMumber&&u.FullName==name);
+            if (user == null)
+            {
+                return false; // User not found
+            }
+            // Here you would implement the logic to send a reset password link or code
+            // For simplicity, we will just return true
+            return true;
+        }
+        public bool AddForgetPassword(string email, string password)
+        {
+            var user = dbcontext.Users.FirstOrDefault(u => u.Email == email );
+            if (user == null)
+            {
+                return false; // User not found
+            }
+            user.Password = password; // Update the password
+            dbcontext.SaveChanges(); // Save changes to the database
+            return true;
+        }
         public string? Authenticate(LoginDTO login)
         {
             var user = dbcontext.Users
@@ -116,7 +137,12 @@ namespace AAUP_LabMaster.EntityManager
 
             return user;  // returns null if not found or invalid login
         }
-
+        public User? GetUserByEmail(string id)
+        {
+            var user = dbcontext.Users
+                .FirstOrDefault(u => u.Email == id);
+            return user;  // returns null if not found
+        }
         public void UpdateUser(int id, UserDTO newuser)
         {
             var user = dbcontext.Users.FirstOrDefault(x => x.Id == id);
