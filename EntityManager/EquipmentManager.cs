@@ -1,4 +1,5 @@
 ﻿using AAUP_LabMaster.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace AAUP_LabMaster.EntityManager
 {
@@ -17,6 +18,20 @@ namespace AAUP_LabMaster.EntityManager
         public Equipment? GetEquipmentById(int id)
         {
             return context.Equipments.FirstOrDefault(e => e.Id == id);
+        }
+        public List<Equipment> GetAllEquipments(string searchString = null)
+        {
+            var query = context.Equipments.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                searchString = searchString.ToLower();
+                query = query.Where(e =>
+                    e.Name.ToLower().Contains(searchString) ||
+                    e.Description.ToLower().Contains(searchString));
+            }
+
+            return query.ToList();
         }
         public Equipment AddEquipment(Equipment equipment)
         {

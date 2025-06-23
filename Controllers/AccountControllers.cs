@@ -120,7 +120,11 @@ namespace AAUP_LabMaster.Controllers
         {
             return View(new LoginDTO());
         }
+
+        // In your AccountController.cs (or wherever your Login POST action is)
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginDTO user)
         {
             if (!ModelState.IsValid)
@@ -129,42 +133,71 @@ namespace AAUP_LabMaster.Controllers
                 return View(user);
             }
 
-            User existingUser = accountManager.Login(user);
-
-            if (existingUser != null)
+            User existingUser = null;
+            try
             {
-                TempData["Message"] = $"Welcome back, {existingUser.FullName}!";
-
-                var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, existingUser.Id.ToString()),
-            new Claim(ClaimTypes.Name, existingUser.FullName ?? ""),
-            new Claim(ClaimTypes.Email, existingUser.Email ?? ""),
-            new Claim(ClaimTypes.Role, existingUser.Role ?? "")
-        };
-
-                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var principal = new ClaimsPrincipal(identity);
-
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
-                if (existingUser.Role == "Admin")
-                {
-                    return RedirectToAction("Dashboard", "Admin");
-                }
-                else if (existingUser.Role == "Client" || existingUser.Role == "Guest" || existingUser.Role == "Supervisour")
-                {
-                    return RedirectToAction("Dashboard", "User");
-                }
-                else
-                {
-                    TempData["LoginError"] = "Role not recognized.";
-                    return View("Login", user);
-                }
+                existingUser = accountManager.Login(user);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Login error for {user.Email}: {ex.Message}");
+                TempData["LoginError"] = "An unexpected error occurred during login. Please try again later.";
+                return View(user);
             }
 
-            TempData["LoginError"] = "Invalid email or password.";
-            return View("Login", user);
+            if (existingUser == null)
+            {
+                TempData["LoginError"] = "Invalid email or password.";
+                return View(user);
+            }
+
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.NameIdentifier, existingUser.Id.ToString()),
+        new Claim(ClaimTypes.Name, existingUser.FullName ?? existingUser.Email ?? "User"),
+        new Claim(ClaimTypes.Email, existingUser.Email ?? ""),
+    };
+
+            if (!string.IsNullOrEmpty(existingUser.Role))
+            {
+                claims.Add(new Claim(ClaimTypes.Role, existingUser.Role));
+            }
+            else
+            {
+                claims.Add(new Claim(ClaimTypes.Role, "Guest"));
+                Console.WriteLine($"Warning: User {existingUser.Email} logged in without a defined role. Assigned 'Guest'.");
+            }
+            Console.WriteLine($"User {existingUser.Email} role: {(string.IsNullOrEmpty(existingUser.Role) ? "NULL/EMPTY" : existingUser.Role)}");
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal,
+                new AuthenticationProperties { IsPersistent = true, ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7) });
+            TempData["Message"] = $"Welcome back, {existingUser.FullName ?? existingUser.Email}!";
+
+         
+            switch (existingUser.Role) 
+            {
+                case "Admin":
+                    return RedirectToAction("Dashboard", "Admin");
+                case "Client":
+                case "Guest":
+                case "Supervisour":
+                    return RedirectToAction("Dashboard", "User");
+                default:
+                    TempData["LoginError"] = "Your account role is not configured for a specific dashboard.";
+                    // Log out the user immediately if the role is unrecognized to prevent unintended access
+                    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                    return View(user);
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            TempData["Message"] = "You have been logged out.";
+            return RedirectToAction("Login", "Account"); // Redirect to the login page
         }
         [HttpGet]
         public IActionResult AdminDashboard()

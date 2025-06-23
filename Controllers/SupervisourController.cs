@@ -22,9 +22,11 @@ namespace AAUP_LabMaster.Controllers
             this.labManager = labManager;
         }
 
-        public List<Booking> getAllBookings()
+        public IActionResult getAllBookingsSupervisour()
         {
-            return bookingManager.getAllBooking();
+            var labs = superManager.getAllBookingBySupervisourId();
+
+            return View(labs);
         }
 
         public IActionResult GetAllLabsBySupervisourId()
@@ -191,6 +193,20 @@ namespace AAUP_LabMaster.Controllers
             return View(equipmentList); // Pass the list of equipment as the model
         }
 
+        public IActionResult updateBookingStatus(int id, Booking.BookStatus status)
+        {
+            try
+            {
+                bookingManager.updateBookingStatus(id, status);
+                TempData["Message"] = "Booking status updated successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error updating booking status: {ex.Message}";
+            }
+            // Redirect to the bookings page or wherever appropriate
+            return RedirectToAction("getAllBookingsSupervisour");
+        }
 
         public IActionResult DeleteEquipment(int id) // Action name is DeleteEquipment, no need for ActionName attribute if matching route
         {

@@ -1,3 +1,4 @@
+﻿@using System.Security.Claims
 @model List<AAUP_LabMaster.Models.Equipment>
 @{
     ViewData["Title"] = "Available Equepments";
@@ -10,13 +11,53 @@
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen">
- 
-<h2 class="text-2xl font-bold mb-4">Available Equepments</h2>
+    <h2 class="text-2xl font-bold mb-4">Available Equipments</h2>
+    <!-- Search Form -->
+    <div class="mb-6">
+        <div class="flex">
+            <input type="text"
+                   id="searchInput"
+                   placeholder="Search by name or description"
+                   class="flex-grow px-4 py-2 border rounded-l focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   oninput="performSearch()">
+            <button onclick="clearSearch()" type="button"
+                    class="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded">
+                Clear
+            </button>
+        </div>
+    </div>
+    <div id="equipmentResults">
+        @await Html.PartialAsync("_EquipmentTable", Model) <!-- Use partial to render table -->
+    </div>
+
+
+
+    @if (ViewBag.UserRole == "Supervisour"){
+        <div class="mb-4">
+            <a href="@Url.Action("AddNewEquipment", "Supervisour")"
+               class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                + Add New Equipment
+            </a>
+        </div>
+    }
+    else if (ViewBag.UserRole == "Client")
+    {
+        <div class="mb-4 text-right">
+            <a href="@Url.Action("RequestEquipment", "Client")"
+               class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                Request Equipment
+            </a>
+        </div>
+    }
+
 <table class="table-auto w-full text-left border-collapse">
    <thead>
   <tr class="bg-gray-200">
   <th class="px-4 py-2">Name</th>
   <th class="px-4 py-2">Description</th>
+                <th class="px-4 py-2">Quantity</th>
+                <th class="px-4 py-2">Price</th>
+
   <th class="px-4 py-2">Status</th>
   </tr>
    </thead>
@@ -25,7 +66,10 @@
    <tr class="border-b">
   <td class="px-4 py-2">@equipment.Name</td>
   <td class="px-4 py-2">@equipment.Description</td>
-  @* <td class="px-4 py-2">@equipment.Status</td> *@
+                    <td class="px-4 py-2">@equipment.Quantity</td>
+                    <td class="px-4 py-2">@equipment.Price</td>
+
+   <td class="px-4 py-2">@equipment.status</td> 
   </tr> 
  }
 </tbody>

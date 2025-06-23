@@ -1,5 +1,6 @@
 using AAUP_LabMaster.EntityManager;
 using AAUP_LabMaster.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -11,12 +12,14 @@ namespace AAUP_LabMaster.Controllers
         private readonly SupervisourManager supervisourManager;
         private readonly EquipmentManager equipmentManager;
         private readonly LabManager labManager;
-        public UserController(ClientManager context, SupervisourManager supervisourManager)
+        public UserController(ClientManager context, SupervisourManager supervisourManager,EquipmentManager equipmentManager,LabManager labManager)
         {
             clientManager = context;
             this.supervisourManager = supervisourManager;
+            this.equipmentManager = equipmentManager;
+            this.labManager = labManager;
         }
-
+     
         public IActionResult Dashboard()
         {
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
@@ -29,6 +32,46 @@ namespace AAUP_LabMaster.Controllers
 
             return View(user);
         }
+
+        [Authorize] // Ensure only authenticated users can access
+        [HttpGet]
+        public IActionResult ViewAllEquipments(string searchString, bool isPartial = false) // isPartial default to false
+        {
+            // Debugging output for role (keep this for now, it's helpful)
+            var roleFromClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+            var roleFromIsInRole = User.IsInRole("Supervisour") ? "Supervisour" : null;
+            Console.WriteLine($"Role from Claim: {roleFromClaim}");
+            Console.WriteLine($"IsInRole('Supervisour'): {User.IsInRole("Supervisour")}");
+            ViewBag.UserRole = roleFromClaim ?? roleFromIsInRole;
+
+            IEnumerable<Equipment> equipments;
+
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                equipments = equipmentManager.GetAllEquipments()
+                                              .Where(e => e.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                                                          e.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                                              .ToList();
+                ViewData["CurrentFilter"] = searchString; // To keep the search term in the input
+            }
+            else
+            {
+                equipments = equipmentManager.GetAllEquipments();
+            }
+
+            // Determine if this is an AJAX request or if the isPartial flag is set
+            // The fetch request from JS will set isPartial=true
+            if (isPartial || Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_EquipmentTable", equipments.ToList()); // Return ONLY the table HTML
+            }
+
+            // This path is for the initial full page load (e.g., direct navigation to /User/ViewAllEquipments)
+            // You would typically still pass the data to the main view, but the main view's JS
+            // will handle rendering the table initially.
+            return View(equipments.ToList());
+        
+}
 
         [HttpGet]
         public IActionResult RequestLab()
@@ -100,13 +143,18 @@ namespace AAUP_LabMaster.Controllers
         }
 
 
-        [HttpGet]
+        [Authorize(Roles = "Supervisour")]
         public IActionResult ViewAvailableEquipments()
         {
-            var equipments = clientManager.GetAvailableEquipment();
+            // Get equipment list from your service
+            var equipments = equipmentManager.GetAllEquipments();
+
+            // Set user role in ViewBag if needed
+            ViewBag.UserRole = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            // Return the correct model type
             return View(equipments);
         }
-
         public IActionResult Notifications()
         {
             var notifications = clientManager.GetMyNotifications();
@@ -122,42 +170,6 @@ namespace AAUP_LabMaster.Controllers
             return RedirectToAction("Notifications");
         }
 
-        //[HttpPost]
-        //public IActionResult SubmitFullForm(
-        //    string lab,
-        //    string equipment,
-        //    DateTime datetime,
-        //    string purpose,
-        //    string notes)
-        //{
-        //    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        //    if (!int.TryParse(userIdClaim, out int userId))
-        //    {
-        //        return RedirectToAction("Login", "Account");
-        //    }
-        //    var booking = new Booking
-        //    {
-        //        //LabName = equipment.la,
-        //        //Equipment = equipment,
-        //        //Date = datetime.Date,
-        //        //Time = datetime.ToString("HH:mm"),
-        //        //Description = purpose,
-        //        //UserId = userId,
-        //        //Notes = notes
-        //    };
-        //    _context.Bookings.Add(booking);
-
-        //    var notification = new Notification
-        //    {
-        //        Message = $"Booking confirmed for {lab} on {datetime.ToShortDateString()} at {datetime.ToShortTimeString()}",
-        //        DateCreated = DateTime.Now,
-        //        UserId = userId
-        //    };
-        //    _context.Notifications.Add(notification);
-        //    _context.SaveChanges();
-        //    TempData["Message"] = "Lab booking submited successfully!";
-        //    return RedirectToAction("Dashboard", "User");
-        //}
 
         public IActionResult LabsPage()
         {
@@ -176,38 +188,7 @@ namespace AAUP_LabMaster.Controllers
             return View();
         }
 
-    //    [HttpGet]
-    //    public IActionResult SeedLabs()
-    //    {
-    //        var existingLabs = _context.Labs.ToList();
-
-    //        var allLabs = new List<Lab>
-    //{
-    //    new Lab { Name = "Chemistry Lab", Description = "Includes lab benches, glassware, and chemical storage." },
-    //    new Lab { Name = "Networking Lab", Description = "Equipped with routers, switches, and topology setup." },
-    //    new Lab { Name = "Physics Lab", Description = "Contains motion sensors, optics kits, and experimental setups." },
-    //    new Lab { Name = "Multimedia Lab", Description = "Equipped with audio/video editing tools and green screen setup." }
-    //};
-
-    //        foreach (var lab in allLabs)
-    //        {
-    //            var existing = existingLabs.FirstOrDefault(l => l.Name == lab.Name);
-    //            if (existing != null)
-    //            {
-
-    //                existing.Description = lab.Description;
-    //            }
-    //            else
-    //            {
-
-    //                _context.Labs.Add(lab);
-    //            }
-    //        }
-
-    //        _context.SaveChanges();
-    //        return Content("Labs seeded or updated successfully. Current count: " + _context.Labs.Count());
-    //    }
-
+  
 
     }
 }
