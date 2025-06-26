@@ -56,7 +56,7 @@ namespace AAUP_LabMaster.EntityManager
                 };
                 dbcontext.Clients.Add((Client)doc);
             }
-            else // Supervisour
+            else 
             {
                 doc = new Supervisour
                 {
@@ -84,8 +84,7 @@ namespace AAUP_LabMaster.EntityManager
             {
                 return false; // User not found
             }
-            // Here you would implement the logic to send a reset password link or code
-            // For simplicity, we will just return true
+      
             return true;
         }
         public bool AddForgetPassword(string email, string password)
@@ -107,10 +106,9 @@ namespace AAUP_LabMaster.EntityManager
             if (user == null)
                 return null;
 
-            // Create claims list with the user's role from the column
             var claims = new List<Claim>
     {
-        new Claim(ClaimTypes.Role, user.Role ?? ""),  // or user.Role if your property is called Role
+        new Claim(ClaimTypes.Role, user.Role ), 
         new Claim("ClientId", user.Id.ToString()),
         new Claim(ClaimTypes.Name, user.FullName ?? user.Email)
     };

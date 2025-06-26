@@ -1,0 +1,66 @@
+﻿@model List<AAUP_LabMaster.Models.Booking>
+@{
+    ViewData["Title"] = "Lab Bookings";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-6">
+    <div class="bg-white p-6 rounded-lg shadow max-w-6xl mx-auto">
+        <h2 class="text-2xl font-bold mb-4">Bookings in Lab</h2>
+
+        @if (Model == null || !Model.Any())
+        {
+            <p class="text-gray-600">No bookings added yet.</p>
+        }
+        else
+        {
+            <table class="table-auto w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="px-4 py-2 border">Client Name</th>
+                        <th class="px-4 py-2 border">Equipment Name</th>
+                        <th class="px-4 py-2 border">Price</th>
+                        <th class="px-4 py-2 border">Lab Name</th>
+                        <th class="px-4 py-2 border">Booking Date</th>
+                        <th class="px-4 py-2 border">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var booking in Model)
+                    {
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="px-4 py-2 border">@booking.Client?.FullName ?? "N/A"</td>
+                            <td class="px-4 py-2 border">@booking.Equipment?.Name ?? "N/A"</td>
+                            <td class="px-4 py-2 border">@booking.Equipment?.Price.ToString("C") ?? "N/A"</td>
+                            <td class="px-4 py-2 border">@booking.Equipment.Lab?.Name ?? "N/A"</td>
+                            <td class="px-4 py-2 border">@booking.Date.ToString("yyyy-MM-dd")</td>
+                            <td class="px-4 py-2 border">
+                                <form asp-action="updateBookingStatus" method="post" class="inline">
+                                    <input type="hidden" name="id" value="@booking.Id" />
+                                    <input type="hidden" name="status" value="@((int)Booking.BookStatus.Approved)" />
+                                    <button type="submit" class="bg-green-600 text-white px-2 py-1 rounded">Approve</button>
+                                </form>
+
+                                <form asp-action="updateBookingStatus" method="post" class="inline ml-2">
+                                    <input type="hidden" name="id" value="@booking.Id" />
+                                    <input type="hidden" name="status" value="@((int)Booking.BookStatus.Rejected)" />
+                                    <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded">Reject</button>
+                                </form>
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+        <div class="mt-4">
+            <a href="/User/Dashboard" class="text-blue-500 hover:underline">← Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

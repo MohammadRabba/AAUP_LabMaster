@@ -1,0 +1,40 @@
+﻿@model List<AAUP_LabMaster.Models.Equipment>
+
+<div class="equipment-table-container">
+    <table class="equipment-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var equipment in Model)
+                {
+                    <tr>
+                        <td>@equipment.Name</td>
+                        <td>@equipment.Description</td>
+                        <td>@equipment.Quantity</td>
+                        <td>@equipment.Price.ToString("C")</td>
+                        <td>
+                            <span class="status-badge @equipment.status.ToString().ToLower()">
+                                @equipment.status.ToString()
+                            </span>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5" class="no-results">No equipment found</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
