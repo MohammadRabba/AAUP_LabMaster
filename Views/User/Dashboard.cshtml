@@ -7,64 +7,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- 
     <meta charset="UTF-8" />
     <title>User Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .dashboard-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-left: 4px solid;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">Welcome back, <span class="text-indigo-600">@Model.FullName</span></h1>
+                <p class="text-gray-600 mt-2">Here's what's happening today</p>
+            </div>
+            <a href="/User/Notifications" class="mt-4 md:mt-0 inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
+                <i class="fas fa-bell mr-2"></i> Notifications
+                <span class="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-green-700 rounded-full">3</span>
+            </a>
+        </div>
 
-    <!--Header-->
-    <header class="bg-[#9B0B0B] text-white p-4 flex justify-between items-center">
-        <h1 class="text-xl font-bold">AAUP_LabMaster</h1>
-        <nav>
-            <a href="/Home/Index" class="px-4 hover:underline">Home</a>
-            <a href="/Account/Login" class="px-4 hover:underline">Logout</a>
-        </nav>
-    </header>
-
-    <div class="max-w-4xl mx-auto mt-8 p-6 bg-white rounded shadow">
-        <h1 class="text-2xl font-bold mb-4">Welcome, @Model.FullName</h1>
-        <a href="/User/Notifications" class="inline-block mb-4 bg-green-700 text-white px-4 py-2 rounded hover:bg-green-900">View Notifications</a>
-
+        <!-- Dashboard Content -->
         @if (Model.Role == "Supervisour")
         {
-            <div class="bg-white shadow p-4 rounded mb-4">
-                <h2 class="text-xl font-semibold mb-2">Lab Supervisor Panel</h2>
-                <ul class="list-disc list-inside text-gray-700">
-                    <li><a href="/User/LabsPage" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded">Manage Labs details</a></li>
-                    <li><a href="/User/ViewAllEquipments" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded">Manage Equipments details</a></li>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Lab Management Card -->
+                <div class="dashboard-card border-l-indigo-500 rounded-lg shadow-sm overflow-hidden card-hover">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-indigo-100 text-indigo-600">
+                                <i class="fas fa-flask text-xl"></i>
+                            </div>
+                            <h3 class="ml-4 text-lg font-medium text-gray-900">Lab Management</h3>
+                        </div>
+                        <p class="mt-4 text-gray-600">Manage all laboratory details and configurations</p>
+                        <div class="mt-6">
+                            <a href="/User/LabsPage" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Manage Labs
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-                    <li>
-                        <a asp-action="getAllBookingsSupervisour"
-                           asp-controller="Supervisour"
-                           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded">
-                            View Bookings
-                        </a>
-                    </li>
-                </ul>
+                <!-- Equipment Management Card -->
+                <div class="dashboard-card border-l-blue-500 rounded-lg shadow-sm overflow-hidden card-hover">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                                <i class="fas fa-microscope text-xl"></i>
+                            </div>
+                            <h3 class="ml-4 text-lg font-medium text-gray-900">Equipment Control</h3>
+                        </div>
+                        <p class="mt-4 text-gray-600">View and manage all laboratory equipment</p>
+                        <div class="mt-6">
+                            <a href="/User/ViewAllEquipments" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                Manage Equipment
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bookings Management Card -->
+                <div class="dashboard-card border-l-purple-500 rounded-lg shadow-sm overflow-hidden card-hover">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                                <i class="fas fa-calendar-check text-xl"></i>
+                            </div>
+                            <h3 class="ml-4 text-lg font-medium text-gray-900">Booking Oversight</h3>
+                        </div>
+                        <p class="mt-4 text-gray-600">View and manage all laboratory bookings</p>
+                        <div class="mt-6">
+                            <a asp-action="getAllBookingsSupervisour" asp-controller="Supervisour" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                                View Bookings
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         }
         else if (Model.Role == "Client")
         {
-            <div class="bg-white shadow p-4 rounded mb-4">
-                <h2 class="text-xl font-semibold mb-2">Client Tasks</h2>
-                <ul class="list-disc list-inside text-gray-700">
-                    <li><a href="/User/RequestLab" class="text-blue-500 hover:underline">Request Lab Booking</a></li>
-                    <li><a href="/User/MyRequests" class="text-blue-500 hover:underline">View Requests</a></li>
-                    <li><a href="/User/ViewAvailableEquipments" class="text-blue-500 hover:underline">View Available Equipments</a></li>
-                </ul>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Request Booking Card -->
+                <div class="dashboard-card border-l-green-500 rounded-lg shadow-sm overflow-hidden card-hover">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100 text-green-600">
+                                <i class="fas fa-plus-circle text-xl"></i>
+                            </div>
+                            <h3 class="ml-4 text-lg font-medium text-gray-900">New Booking</h3>
+                        </div>
+                        <p class="mt-4 text-gray-600">Request a new laboratory booking for your research</p>
+                        <div class="mt-6">
+                            <a href="/User/RequestLab" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                Request Lab
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Requests Card -->
+                <div class="dashboard-card border-l-amber-500 rounded-lg shadow-sm overflow-hidden card-hover">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-amber-100 text-amber-600">
+                                <i class="fas fa-list-alt text-xl"></i>
+                            </div>
+                            <h3 class="ml-4 text-lg font-medium text-gray-900">My Requests</h3>
+                        </div>
+                        <p class="mt-4 text-gray-600">View and track your booking requests</p>
+                        <div class="mt-6">
+                            <a href="/User/MyRequests" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
+                                View Requests
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Equipment Card -->
+                <div class="dashboard-card border-l-cyan-500 rounded-lg shadow-sm overflow-hidden card-hover">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-cyan-100 text-cyan-600">
+                                <i class="fas fa-tools text-xl"></i>
+                            </div>
+                            <h3 class="ml-4 text-lg font-medium text-gray-900">Equipment</h3>
+                        </div>
+                        <p class="mt-4 text-gray-600">Browse available laboratory equipment</p>
+                        <div class="mt-6">
+                            <a href="/User/ViewAvailableEquipments" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500">
+                                View Equipment
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
-       }
+
+            <!-- Recent Activity Section -->
+            <div class="mt-12 bg-white shadow-sm rounded-lg overflow-hidden">
+                <div class="px-6 py-5 border-b border-gray-200">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900">Recent Activity</h3>
+                </div>
+                <div class="bg-gray-50 px-6 py-4">
+                    <p class="text-sm text-gray-600">You have 2 pending requests and 5 completed bookings this month.</p>
+                </div>
+            </div>
+        }
         else
         {
-            <p class="text-gray-700">Error: No user data available.</p>
+            <div class="bg-white shadow rounded-lg p-6">
+                <div class="text-center">
+                    <i class="fas fa-exclamation-triangle text-yellow-500 text-5xl mb-4"></i>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">User Data Not Available</h3>
+                    <p class="text-gray-600">We couldn't retrieve your user information. Please try again or contact support.</p>
+                    <div class="mt-6">
+                        <a href="#" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <i class="fas fa-sync-alt mr-2"></i> Refresh
+                        </a>
+                    </div>
+                </div>
+            </div>
         }
     </div>
-    <!-- Footer-->
-    <footer class="bg-[#9B0B0B] text-white text-center py-4 mt-10">
-        <p>&copy; 2025 AAUP_LabMaster | labs@aaup.edu</p>
-    </footer>
 </body>
-
-</html>  
+</html>
