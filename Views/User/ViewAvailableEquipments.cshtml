@@ -1,34 +1,50 @@
 @model List<AAUP_LabMaster.Models.Equipment>
 @{
-    ViewData["Title"] = "Available Equepments";
-        Layout = "_UserLayout";
+    ViewData["Title"] = "Available Equipments";
+    Layout = "_UserLayout";
 }
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-<script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen">
- 
-<h2 class="text-2xl font-bold mb-4">Available Equepments</h2>
+
+<h2 class="text-2xl font-bold mb-4">Available Equipments</h2>
 <table class="table-auto w-full text-left border-collapse">
    <thead>
-  <tr class="bg-gray-200">
-  <th class="px-4 py-2">Name</th>
-  <th class="px-4 py-2">Description</th>
-  <th class="px-4 py-2">Status</th>
-  </tr>
+     <tr class="bg-gray-200">
+        <th class="px-4 py-2">Name</th>
+        <th class="px-4 py-2">Description</th>
+        <th class="px-4 py-2">Status</th>
+        <th class="px-4 py-2">Action</th>
+     </tr>
    </thead>
-<tbody>
- @foreach (var equipment in Model){
-   <tr class="border-b">
-  <td class="px-4 py-2">@equipment.Name</td>
-  <td class="px-4 py-2">@equipment.Description</td>
-  @* <td class="px-4 py-2">@equipment.Status</td> *@
-  </tr> 
- }
-</tbody>
+   <tbody>
+    @foreach (var equipment in Model)
+    {
+        <tr class="border-b">
+            <td class="px-4 py-2">@equipment.Name</td>
+            <td class="px-4 py-2">@equipment.Description</td>
+            <td class="px-4 py-2">@equipment.status</td>
+            <td class="px-4 py-2">
+                @* Check if the equipment is available before showing the "Book" button *@
+                @if (equipment.status == AAUP_LabMaster.Models.Equipment.Availability.Available)
+                {
+                    <a href="@Url.Action("MakeBook", "User", new { equipmentName = equipment.Name, equipmentId = equipment.Id })" class="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+                        Book
+                    </a>
+                }
+                else
+                {
+                    <span class="text-gray-500">Not Available</span>
+                }
+            </td>
+        </tr>
+    }
+   </tbody>
 </table>
+
 </body>
 </html>
