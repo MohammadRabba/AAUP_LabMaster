@@ -6,6 +6,7 @@ namespace AAUP_LabMaster.EntityDTO
 {
     public class EquipmentDTO
     {
+        public int Id { get; set; }
         [Required(ErrorMessage = "Name is required")]
         public string Name { get; set; } = string.Empty;
 
@@ -17,7 +18,9 @@ namespace AAUP_LabMaster.EntityDTO
         public decimal Price { get; set; }
 
         public string Description { get; set; } = string.Empty;
-
+        public string? linkUrl { get; set; } 
+        public string? ImagePath { get; set; }
+        public IFormFile? ImageFile { get; set; }
         public Availability status { get; set; }
 
         [Required(ErrorMessage = "Lab selection is required")]

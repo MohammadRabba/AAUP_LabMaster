@@ -61,6 +61,7 @@
         <form asp-action="UpdateEquipment"
               asp-controller="Supervisour"
               method="post"
+              enctype="multipart/form-data" {{-- Add this for file uploads --}}
               class="space-y-4">
 
             <!-- ضروري لإرسال الـ Id -->
@@ -102,7 +103,28 @@
                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2"></textarea>
                 <span asp-validation-for="Description" class="text-red-600 text-xs mt-1"></span>
             </div>
+            <input type="hidden" asp-for="ImagePath" />
 
+            @if (!string.IsNullOrEmpty(Model.ImagePath))
+            {
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Current Image</label>
+                    <img src="@Model.ImagePath" alt="Current Equipment Image" class="mt-2 h-32 w-32 object-cover rounded-md border border-gray-200" />
+                </div>
+            }
+            {{-- Add file input for new image upload --}}
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Upload New Image (Optional)</label>
+                <input type="file" name="ImageFile" class="mt-1 block w-full text-gray-700" />
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Link URL</label>
+                <textarea asp-for="Link"
+                          rows="3"
+                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2"></textarea>
+                <span asp-validation-for="Link" class="text-red-600 text-xs mt-1"></span>
+            </div>
             <!-- الحالة -->
             <div>
                 <label class="block text-sm font-medium text-gray-700">Status</label>
@@ -158,3 +180,5 @@
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
 }
+
+
