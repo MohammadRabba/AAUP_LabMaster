@@ -23,6 +23,10 @@ namespace AAUP_LabMaster.Models
         public decimal Price { get; set; }
 
         public string Description { get; set; } = string.Empty;
+        public string? ImagePath { get; set; }
+        public IFormFile? ImageFile { get; set; }
+
+        public string? Link { get; set; }
 
         public Availability status { get; set; }
 
@@ -35,7 +39,7 @@ namespace AAUP_LabMaster.Models
         [ValidateNever]
         public List<Booking> Bookings { get; set; }
         public Equipment() { }
-        public Equipment(string name,int Quantity,decimal Price,string Description,Availability Status,Lab lab) {
+        public Equipment(string name,int Quantity,decimal Price,string Description,string imagePath,string linkUrl,Availability Status,Lab lab) {
             Name = name;
             this.Quantity=
                 Quantity;
@@ -44,6 +48,8 @@ namespace AAUP_LabMaster.Models
             this.Price = Price;
             this.Description = Description;
             this.status = Status;
+            ImagePath = imagePath;
+            Link = linkUrl;
         }
 
     }

@@ -8,6 +8,8 @@
                 <th>Description</th>
                 <th>Quantity</th>
                 <th>Price</th>
+                <th>Link</th>
+
                 <th>Status</th>
             </tr>
         </thead>
@@ -21,6 +23,8 @@
                         <td>@equipment.Description</td>
                         <td>@equipment.Quantity</td>
                         <td>@equipment.Price.ToString("C")</td>
+                        <td>@equipment.Link</td>
+
                         <td>
                             <span class="status-badge @equipment.status.ToString().ToLower()">
                                 @equipment.status.ToString()
