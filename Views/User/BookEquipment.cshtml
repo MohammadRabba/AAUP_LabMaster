@@ -1,0 +1,28 @@
+@model AAUP_LabMaster.EntityDTO.BookingDTO
+@{
+    ViewData["Title"] = "Book Equipment";
+    Layout = "_UserLayout";
+}
+
+<h2 class="text-2xl font-bold mb-4">Book Equipment: @Model.Equipment.Name</h2>
+
+<form method="post" action="@Url.Action("MakeBook", "User")">
+    <input type="hidden" name="equipmentId" value="@Model.EquipmentId" />
+    <input type="hidden" name="equipmentName" value="@Model.Equipment.Name" />
+
+    <div class="mb-4">
+        <label for="date" class="block text-sm font-medium text-gray-700">Booking Date</label>
+        <input type="datetime-local" id="date" name="date" class="mt-1 block w-full" required />
+    </div>
+
+    <div class="mb-4">
+        <label for="notes" class="block text-sm font-medium text-gray-700">Notes</label>
+        <textarea id="notes" name="notes" class="mt-1 block w-full" rows="4" placeholder="Enter any additional notes"></textarea>
+    </div>
+
+    <div class="mb-4">
+        <p class="text-gray-500">Price: @Model.Price</p>
+    </div>
+
+    <button type="submit" class="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Confirm Booking</button>
+</form>

@@ -1,6 +1,7 @@
 @model AAUP_LabMaster.Models.Lab
 @{
     ViewData["Title"] = "Edit Lab";
+    Layout = "_AdminLayout";
 }
 
 <!DOCTYPE html>
@@ -14,13 +15,7 @@
 </head>
 <body class="bg-gray-100 min-h-screen font-sans">
 
-    <header class="bg-[#9B0B0B] text-white p-4 flex justify-between items-center shadow-md">
-        <h1 class="text-xl md:text-2xl font-bold">AAUP_LabMaster</h1>
-        <nav class="space-x-4">
-            <a href="/Home/Index" class="px-3 py-2 rounded-md hover:bg-white hover:bg-opacity-20 transition-colors duration-200">Home</a>
-            <a href="/Account/Login" class="px-3 py-2 rounded-md hover:bg-white hover:bg-opacity-20 transition-colors duration-200">Logout</a>
-        </nav>
-    </header>
+    
 
     <div class="min-h-screen bg-gradient-to-br from-gray-100 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-3xl w-full space-y-8 p-10 bg-white/90 backdrop-blur rounded-xl shadow-xl border border-gray-200">

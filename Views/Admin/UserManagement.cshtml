@@ -1,7 +1,7 @@
 @model List<AAUP_LabMaster.Models.User>
 @{
     ViewData["Title"] = "User Management";
-}
+    Layout = "_AdminLayout";}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,14 +13,7 @@
        class="inline-block mb-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
         + Add New User
     </a>
-<!--Header-->
-<header class="bg-[#9B0B0B] text-white p-4 flex justify-between items-center">
-  <h1 class="text-xl font-bold">AAUP_LabMaster</h1>
-  <nav>
-     <a href="/Home/Index" class="px-4 hover:underline">Home</a>
-     <a href="/Account/Login" class="px-4 hover:underline">Logout</a>
-  </nav>
-</header>
+ 
 
 <h2 class="text-2xl font-bold mb-4">User List</h2>
   <table class="table-auto w-full text-left border-collapse">
