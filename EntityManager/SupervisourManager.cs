@@ -35,6 +35,7 @@ namespace AAUP_LabMaster.EntityManager
             return context.Supervisours.FirstOrDefault(s => s.Id == id);
         }
 
+ 
         public List<Booking> getAllBookingBySupervisourId()
         {
             var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -42,7 +43,7 @@ namespace AAUP_LabMaster.EntityManager
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int supervisorId))
             {
                 Console.WriteLine("Supervisor ID claim is missing or invalid.");
-                return new List<Booking>(); 
+                return new List<Booking>();
             }
 
             return bookingManager.getBookingById(supervisorId);

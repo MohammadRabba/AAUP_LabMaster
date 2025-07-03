@@ -8,7 +8,7 @@ namespace AAUP_LabMaster.EntityManager
     public class BookingManager
     {
         private readonly ApplicationDbContext context;
-public BookingManager(ApplicationDbContext context)
+        public BookingManager(ApplicationDbContext context)
         {
             this.context = context;
         }
@@ -32,11 +32,15 @@ public BookingManager(ApplicationDbContext context)
             context.SaveChanges();
             return true;
         }
-        public List<Booking> getBookingById(int id) {  return context.Bookings
-                          .Include(b => b.Equipment)
-                          .ThenInclude(e => e.Lab)
-                          .Where(b => b.Equipment.Lab.SupervisorId == id)
-                          .ToList();
+
+        public List<Booking> getBookingById(int supervisorId)
+        {
+            return context.Bookings
+                .Include(b => b.Client)              // Load Client data
+                .Include(b => b.Equipment)           // Load Equipment
+                    .ThenInclude(e => e.Lab)         // Load Lab to access SupervisorId
+                .Where(b => b.Equipment.Lab.SupervisorId == supervisorId)
+                .ToList();
         }
         public bool EditBooking(int id, BookingDTO booking, string cientName, String EquepmentName)
         {
@@ -86,17 +90,25 @@ public BookingManager(ApplicationDbContext context)
                          .FirstOrDefault() ?? "N/A";
             return mostUsedLab;
         }
-       
+
         public List<Booking> getAllBooking()
         {
 
             return context.Bookings.ToList();
         }
-        public void updateBookingStatus(int bookingId,Booking.BookStatus status)
+        // public void updateBookingStatus(int bookingId, Booking.BookStatus status)
+        // {
+        //     var booking = context.Bookings.FirstOrDefault(x => x.Id == bookingId);
+        //     booking.status = status;
+        //     context.SaveChanges();
+        // }
+        
+        public void updateBookingStatus(int bookingId, Booking.BookStatus status)
         {
-            var booking = context.Bookings.FirstOrDefault(x=>x.Id == bookingId);
-            booking.status=status;
+            var booking = context.Bookings.FirstOrDefault(x => x.Id == bookingId);
+            booking.status = status; // Sets status to Approved (1), Rejected (2), etc.
             context.SaveChanges();
         }
+
     }
 }

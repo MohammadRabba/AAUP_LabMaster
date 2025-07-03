@@ -7,7 +7,9 @@ namespace AAUP_LabMaster.Models
     {
         public enum BookStatus
         {
-            Approved, Pending, Rejected
+         Pending = 0,
+        Approved = 1,
+        Rejected = 2
 
         }
         public int Id { get; set; }

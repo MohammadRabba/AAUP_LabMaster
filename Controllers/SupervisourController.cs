@@ -27,12 +27,18 @@ namespace AAUP_LabMaster.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
+        // public IActionResult getAllBookingsSupervisour()
+        // {
+        //     var labs = superManager.getAllBookingBySupervisourId();
+
+        //     return View(labs);
+        // }
         public IActionResult getAllBookingsSupervisour()
         {
-            var labs = superManager.getAllBookingBySupervisourId();
-
-            return View(labs);
+            var bookings = superManager.getAllBookingBySupervisourId();
+            return View(bookings);
         }
+
 
         public IActionResult GetAllLabsBySupervisourId()
         {
@@ -295,19 +301,146 @@ namespace AAUP_LabMaster.Controllers
             return View(equipmentList); // Pass the list of equipment as the model
         }
 
+        [HttpPost]
         public IActionResult updateBookingStatus(int id, Booking.BookStatus status)
         {
             try
             {
-                bookingManager.updateBookingStatus(id, status);
+                bookingManager.updateBookingStatus(id, status); // this sets booking.status = status
                 TempData["Message"] = "Booking status updated successfully.";
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = $"Error updating booking status: {ex.Message}";
             }
-            // Redirect to the bookings page or wherever appropriate
+
             return RedirectToAction("getAllBookingsSupervisour");
+        }
+
+
+        // public IActionResult updateBookingStatus(int id, Booking.BookStatus status)
+        // {
+        //     try
+        //     {
+        //         bookingManager.updateBookingStatus(id, status);
+        //         TempData["Message"] = "Booking status updated successfully.";
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         TempData["ErrorMessage"] = $"Error updating booking status: {ex.Message}";
+        //     }
+        //     // Redirect to the bookings page or wherever appropriate
+        //     return RedirectToAction("getAllBookingsSupervisour");
+        // }
+        [HttpGet]
+        public IActionResult getAllBookingsSupervisour(string name, string date, string equipment, string lab, string sortOrder)
+        {
+            var bookings = superManager.getAllBookingBySupervisourId();
+            var filtered = bookings
+                .Where(b => b.status == Booking.BookStatus.Pending)
+                .AsQueryable();
+
+            // Apply filters
+            if (!string.IsNullOrWhiteSpace(name))
+                filtered = filtered.Where(b => b.Client.FullName.Contains(name, StringComparison.OrdinalIgnoreCase));
+
+            if (!string.IsNullOrWhiteSpace(date) && DateTime.TryParse(date, out var parsedDate))
+                filtered = filtered.Where(b => b.Date.Date == parsedDate.Date);
+
+            if (!string.IsNullOrWhiteSpace(equipment))
+                filtered = filtered.Where(b => b.Equipment.Name.Contains(equipment, StringComparison.OrdinalIgnoreCase));
+
+            if (!string.IsNullOrWhiteSpace(lab))
+                filtered = filtered.Where(b => b.Equipment.Lab.Name.Contains(lab, StringComparison.OrdinalIgnoreCase));
+
+            // Default to descending if sortOrder is null/empty
+            sortOrder = string.IsNullOrEmpty(sortOrder) ? "desc" : sortOrder;
+
+            filtered = sortOrder == "desc"
+                ? filtered.OrderByDescending(b => b.Date)
+                : filtered.OrderBy(b => b.Date);
+
+            // Preserve search values in view
+            ViewBag.SearchName = name;
+            ViewBag.SearchDate = date;
+            ViewBag.SearchEquipment = equipment;
+            ViewBag.SearchLab = lab;
+            ViewBag.SortOrder = sortOrder;
+
+            return View(filtered.ToList());
+}
+
+
+       [HttpGet]
+        public IActionResult ApprovedBookings(string name, string date, string equipment, string lab, string sortOrder)
+        {
+            var bookings = superManager.getAllBookingBySupervisourId();
+            var approved = bookings
+                .Where(b => b.status == Booking.BookStatus.Approved)
+                .AsQueryable();
+
+            // Filters
+            if (!string.IsNullOrWhiteSpace(name))
+                approved = approved.Where(b => b.Client.FullName.Contains(name, StringComparison.OrdinalIgnoreCase));
+
+            if (!string.IsNullOrWhiteSpace(date) && DateTime.TryParse(date, out DateTime parsedDate))
+                approved = approved.Where(b => b.Date.Date == parsedDate.Date);
+
+            if (!string.IsNullOrWhiteSpace(equipment))
+                approved = approved.Where(b => b.Equipment.Name.Contains(equipment, StringComparison.OrdinalIgnoreCase));
+
+            if (!string.IsNullOrWhiteSpace(lab))
+                approved = approved.Where(b => b.Equipment.Lab.Name.Contains(lab, StringComparison.OrdinalIgnoreCase));
+
+            // Sorting
+            approved = sortOrder == "desc"
+                ? approved.OrderByDescending(b => b.Date)
+                : approved.OrderBy(b => b.Date);
+
+            // Preserve values in ViewBag for form
+            ViewBag.SearchName = name;
+            ViewBag.SearchDate = date;
+            ViewBag.SearchEquipment = equipment;
+            ViewBag.SearchLab = lab;
+            ViewBag.SortOrder = sortOrder;
+
+            return View("ApprovedBookings", approved.ToList());
+        }
+
+
+
+         [HttpGet]
+        public IActionResult RejectedBookings(string name, string date, string equipment, string lab, string sortOrder)
+        {
+            var bookings = superManager.getAllBookingBySupervisourId();
+            var rejected = bookings
+                .Where(b => b.status == Booking.BookStatus.Rejected)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(name))
+                rejected = rejected.Where(b => b.Client.FullName.Contains(name, StringComparison.OrdinalIgnoreCase));
+
+            if (!string.IsNullOrWhiteSpace(date) && DateTime.TryParse(date, out DateTime parsedDate))
+                rejected = rejected.Where(b => b.Date.Date == parsedDate.Date);
+
+            if (!string.IsNullOrWhiteSpace(equipment))
+                rejected = rejected.Where(b => b.Equipment.Name.Contains(equipment, StringComparison.OrdinalIgnoreCase));
+
+            if (!string.IsNullOrWhiteSpace(lab))
+                rejected = rejected.Where(b => b.Equipment.Lab.Name.Contains(lab, StringComparison.OrdinalIgnoreCase));
+
+          rejected = sortOrder == "desc"
+            ? rejected.OrderByDescending(b => b.Date)
+            : rejected.OrderBy(b => b.Date);
+
+
+            ViewBag.SearchName = name;
+            ViewBag.SearchDate = date;
+            ViewBag.SearchEquipment = equipment;
+            ViewBag.SearchLab = lab;
+            ViewBag.SortOrder = sortOrder;
+
+            return View("RejectedBookings", rejected.ToList());
         }
 
         public IActionResult DeleteEquipment(int id) // Action name is DeleteEquipment, no need for ActionName attribute if matching route

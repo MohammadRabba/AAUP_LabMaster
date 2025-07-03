@@ -1,8 +1,11 @@
 @model List<AAUP_LabMaster.Models.Equipment>
+@using AAUP_LabMaster.Models
 
 @{
     ViewData["Title"] = "Available Equipment";
     Layout = "_UserLayout";
+
+    var availableEquipment = Model.Where(e => e.status == Equipment.Availability.Available).ToList();
 }
 
 <!DOCTYPE html>
@@ -28,33 +31,30 @@
             </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-            @foreach (var equipment in Model)
+            @foreach (var equipment in availableEquipment)
             {
-                if (equipment.status == AAUP_LabMaster.Models.Equipment.Availability.Available)
-                {
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap">@equipment.Name</td>
-                        <td class="px-6 py-4 whitespace-nowrap">@equipment.Description</td>
-                        <td class="px-6 py-4 whitespace-nowrap">@equipment.Quantity</td>
-                        <td class="px-6 py-4 whitespace-nowrap">@equipment.Price.ToString("C")</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="inline-flex px-2 text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                Available
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <a href="/User/RequestLab?equipmentId=@equipment.Id"
-                               class="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded">
-                                Book Now
-                            </a>
-                        </td>
-                    </tr>
-                }
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">@equipment.Name</td>
+                    <td class="px-6 py-4 whitespace-nowrap">@equipment.Description</td>
+                    <td class="px-6 py-4 whitespace-nowrap">@equipment.Quantity</td>
+                    <td class="px-6 py-4 whitespace-nowrap">@equipment.Price.ToString("C")</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex px-2 text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            Available
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <a href="/User/RequestLab?equipmentId=@equipment.Id"
+                           class="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded">
+                            Book Now
+                        </a>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
 
-    @if (!Model.Any(e => e.status == AAUP_LabMaster.Models.Equipment.Availability.Available))
+    @if (!availableEquipment.Any())
     {
         <div class="mt-6 text-center text-gray-600">No available equipment at the moment.</div>
     }

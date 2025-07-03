@@ -196,12 +196,12 @@ namespace AAUP_LabMaster.EntityManager
                     context.SaveChanges();
                     Console.WriteLine("Booking  created successfully.");
 
-                    var notificationManager = new NotificationManager();
-                    notificationManager.SendEmail(
-                        userEmailString,
-                        "Booking Confirmation",
-                        $"Dear {userNameString}, your booking has been created."
-                    );
+                    // var notificationManager = new NotificationManager();
+                    // notificationManager.SendEmail(
+                    //     userEmailString,
+                    //     "Booking Confirmation",
+                    //     $"Dear {userNameString}, your booking has been created."
+                    // );
                 }
              
         }

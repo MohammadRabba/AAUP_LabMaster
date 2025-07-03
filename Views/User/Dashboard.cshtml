@@ -97,13 +97,32 @@
                         </div>
                     </div>
                 </div>
+                
+               
+                <div class="dashboard-card border-l-purple-500 rounded-lg shadow-sm overflow-hidden card-hover">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                                <i class="fas fa-calendar-check text-xl"></i>
+                            </div>
+                            <h3 class="ml-4 text-lg font-medium text-gray-900">Approved Booking </h3>
+                        </div>
+                        <p class="mt-4 text-gray-600">View all Approved Booking</p>
+                        <div class="mt-6">
+                            <a asp-action="ApprovedBookings" asp-controller="Supervisour" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                                View Approved Bookings
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         }
         else if (Model.Role == "Client")
         {
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Request Booking Card -->
-                <div class="dashboard-card border-l-green-500 rounded-lg shadow-sm overflow-hidden card-hover">
+                @* <div class="dashboard-card border-l-green-500 rounded-lg shadow-sm overflow-hidden card-hover">
                     <div class="p-6">
                         <div class="flex items-center">
                             <div class="p-3 rounded-full bg-green-100 text-green-600">
@@ -119,7 +138,7 @@
                             </a>
                         </div>
                     </div>
-                </div>
+                </div> *@
 
                 <!-- My Requests Card -->
                 <div class="dashboard-card border-l-amber-500 rounded-lg shadow-sm overflow-hidden card-hover">
@@ -135,6 +154,7 @@
                             <a href="/User/MyRequests" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
                                 View Requests
                                 <i class="fas fa-arrow-right ml-2"></i>
+                               
                             </a>
                         </div>
                     </div>

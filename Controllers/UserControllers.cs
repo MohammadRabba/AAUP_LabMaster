@@ -167,13 +167,14 @@ namespace AAUP_LabMaster.Controllers
         //     return View(equipments);
         // }
 
-        [Authorize(Roles = "Client,Supervisour")]
+       [Authorize(Roles = "Client,Supervisour")]
         public IActionResult ViewAvailableEquipments()
         {
             var equipments = equipmentManager.GetAllEquipments();
             ViewBag.UserRole = User.FindFirst(ClaimTypes.Role)?.Value;
             return View(equipments);
         }
+
 
         // [Authorize(Roles = "Supervisour")]
         // public IActionResult ViewAvailableEquipments()
