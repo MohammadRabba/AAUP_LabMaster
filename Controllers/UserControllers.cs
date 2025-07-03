@@ -73,9 +73,21 @@ namespace AAUP_LabMaster.Controllers
         
 }
 
+        // [HttpGet]
+        // public IActionResult RequestLab()
+        // {
+        //     return View();
+        // }
+
         [HttpGet]
-        public IActionResult RequestLab()
+        public IActionResult RequestLab(int? equipmentId)
         {
+            if (equipmentId.HasValue)
+            {
+                var equipment = equipmentManager.GetEquipmentById(equipmentId.Value);
+                ViewBag.SelectedEquipment = equipment;
+            }
+
             return View();
         }
 
@@ -143,18 +155,40 @@ namespace AAUP_LabMaster.Controllers
         }
 
 
-        [Authorize(Roles = "Supervisour")]
+
+
+        // [Authorize(Roles = "Supervisour")]
+        // public IActionResult ViewAvailableEquipments()
+        // {
+        //     var equipments = equipmentManager.GetAllEquipments()
+        //                                     .Where(e => e.status == Equipment.Availability.Available)
+        //                                     .ToList();
+        //     ViewBag.UserRole = User.FindFirst(ClaimTypes.Role)?.Value;
+        //     return View(equipments);
+        // }
+
+        [Authorize(Roles = "Client,Supervisour")]
         public IActionResult ViewAvailableEquipments()
         {
-            // Get equipment list from your service
             var equipments = equipmentManager.GetAllEquipments();
-
-            // Set user role in ViewBag if needed
             ViewBag.UserRole = User.FindFirst(ClaimTypes.Role)?.Value;
-
-            // Return the correct model type
             return View(equipments);
         }
+
+        // [Authorize(Roles = "Supervisour")]
+        // public IActionResult ViewAvailableEquipments()
+        // {
+        //     // Get equipment list from your service
+        //     var equipments = equipmentManager.GetAllEquipments();
+
+        //     // Set user role in ViewBag if needed
+        //     ViewBag.UserRole = User.FindFirst(ClaimTypes.Role)?.Value;
+
+        //     // Return the correct model type
+        //     return View(equipments);
+        // }
+
+
         public IActionResult Notifications()
         {
             var notifications = clientManager.GetMyNotifications();

@@ -1,80 +1,63 @@
-﻿@using System.Security.Claims
 @model List<AAUP_LabMaster.Models.Equipment>
+
 @{
-    ViewData["Title"] = "Available Equipments";
+    ViewData["Title"] = "Available Equipment";
     Layout = "_UserLayout";
 }
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>@ViewData["Title"]</title>
 </head>
-<body class="bg-gray-100 min-h-screen"> 
-    <h2 class="text-2xl font-bold mb-4">Available Equipments</h2>
-    <!-- Search Form -->
-    <div class="mb-6">
-        <div class="flex">
-            <input type="text"
-                   id="searchInput"
-                   placeholder="Search by name or description"
-                   class="flex-grow px-4 py-2 border rounded-l focus:outline-none focus:ring-2 focus:ring-blue-500"
-                   oninput="performSearch()">
-            <button onclick="clearSearch()" type="button"
-                    class="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded">
-                Clear
-            </button>
-        </div>
-    </div>
-    <div id="equipmentResults">
-        @await Html.PartialAsync("_EquipmentTable", Model) <!-- Use partial to render table -->
-    </div>
+<body class="bg-gray-100 min-h-screen">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Available Equipment</h2>
 
+    <table class="min-w-full divide-y divide-gray-200 shadow-md bg-white rounded-lg overflow-hidden">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+            </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+            @foreach (var equipment in Model)
+            {
+                if (equipment.status == AAUP_LabMaster.Models.Equipment.Availability.Available)
+                {
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">@equipment.Name</td>
+                        <td class="px-6 py-4 whitespace-nowrap">@equipment.Description</td>
+                        <td class="px-6 py-4 whitespace-nowrap">@equipment.Quantity</td>
+                        <td class="px-6 py-4 whitespace-nowrap">@equipment.Price.ToString("C")</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex px-2 text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                Available
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <a href="/User/RequestLab?equipmentId=@equipment.Id"
+                               class="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded">
+                                Book Now
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
 
-
-    @if (ViewBag.UserRole == "Supervisour"){
-        <div class="mb-4">
-            <a href="@Url.Action("AddNewEquipment", "Supervisour")"
-               class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                + Add New Equipment
-            </a>
-        </div>
-    }
-    else if (ViewBag.UserRole == "Client")
+    @if (!Model.Any(e => e.status == AAUP_LabMaster.Models.Equipment.Availability.Available))
     {
-        <div class="mb-4 text-right">
-            <a href="@Url.Action("RequestEquipment", "Client")"
-               class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                Request Equipment
-            </a>
-        </div>
+        <div class="mt-6 text-center text-gray-600">No available equipment at the moment.</div>
     }
-
-<table class="table-auto w-full text-left border-collapse">
-   <thead>
-  <tr class="bg-gray-200">
-  <th class="px-4 py-2">Name</th>
-  <th class="px-4 py-2">Description</th>
-                <th class="px-4 py-2">Quantity</th>
-                <th class="px-4 py-2">Price</th>
-
-  <th class="px-4 py-2">Status</th>
-  </tr>
-   </thead>
-<tbody>
- @foreach (var equipment in Model){
-   <tr class="border-b">
-  <td class="px-4 py-2">@equipment.Name</td>
-  <td class="px-4 py-2">@equipment.Description</td>
-                    <td class="px-4 py-2">@equipment.Quantity</td>
-                    <td class="px-4 py-2">@equipment.Price</td>
-
-   <td class="px-4 py-2">@equipment.status</td> 
-  </tr> 
- }
-</tbody>
- 
-</table>
-
+</div>
 </body>
 </html>
