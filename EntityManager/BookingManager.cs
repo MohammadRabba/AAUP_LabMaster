@@ -1,6 +1,7 @@
 ﻿using AAUP_LabMaster.EntityDTO;
 using AAUP_LabMaster.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 using static AAUP_LabMaster.Models.Equipment;
 
 namespace AAUP_LabMaster.EntityManager
@@ -8,9 +9,11 @@ namespace AAUP_LabMaster.EntityManager
     public class BookingManager
     {
         private readonly ApplicationDbContext context;
-        public BookingManager(ApplicationDbContext context)
+        private readonly NotificationManager noteManager;
+        public BookingManager(ApplicationDbContext context, NotificationManager noteManager)
         {
             this.context = context;
+            this.noteManager = noteManager;
         }
 
         public bool RemoveBooking(int id)
@@ -22,12 +25,11 @@ namespace AAUP_LabMaster.EntityManager
 
             var notification = new Notification
             {
-                UserId = booking.ClientId,
-                Message = $"Your booking for {booking.Equipment.Lab.Name} on {booking.Date.ToShortDateString()} at {booking.Date.TimeOfDay} was deleted by admin.",
+                UserId = booking.ClientId,Subject= "Booking Deleted",
+                Body = $"Your booking for {booking.Equipment.Lab.Name} on {booking.Date.ToShortDateString()} at {booking.Date.TimeOfDay} was deleted by admin.",
                 DateCreated = DateTime.Now
             };
-            context.Notifications.Add(notification);
-
+noteManager.SendNote(notification);
             context.Bookings.Remove(booking);
             context.SaveChanges();
             return true;
@@ -76,7 +78,13 @@ namespace AAUP_LabMaster.EntityManager
                     newBooking.EquipmentId = newEquip.Id;
                     newBooking.ClientId = newClient.Id;
                 }
-
+                noteManager.SendNote(new Notification
+                {
+                    UserId = newClient.Id,
+                    Subject = "Booking Updated",
+                    Body = $"Your booking for {newEquip.Name} in {newEquip.Lab.Name} on {newBooking.Date.ToShortDateString()} at {newBooking.Date.TimeOfDay} was updated.",
+                    DateCreated = DateTime.Now
+                });
                 context.SaveChanges();
                 return true;
 
@@ -107,6 +115,27 @@ namespace AAUP_LabMaster.EntityManager
         {
             var booking = context.Bookings.FirstOrDefault(x => x.Id == bookingId);
             booking.status = status; // Sets status to Approved (1), Rejected (2), etc.
+            if( status == Booking.BookStatus.Approved)
+            {
+                noteManager.SendNote(new Notification
+                {
+                    UserId = booking.ClientId,
+                    Subject = "Booking Updated",
+                    Body = $"Your booking for {booking.Equipment.Name} in {booking.Equipment.Lab.Name} on {booking.Date.ToShortDateString()} at {booking.Date.TimeOfDay} was Approved.",
+                    DateCreated = DateTime.Now
+                });
+            }
+            else if (status == Booking.BookStatus.Rejected)
+            {
+                noteManager.SendNote(new Notification
+                {
+                    UserId = booking.ClientId,
+                    Subject = "Booking Updated",
+                    Body = $"Your booking for {booking.Equipment.Name} in {booking.Equipment.Lab.Name} on {booking.Date.ToShortDateString()} at {booking.Date.TimeOfDay} was Rejected.",
+                    DateCreated = DateTime.Now
+                });
+            }
+        
             context.SaveChanges();
         }
 

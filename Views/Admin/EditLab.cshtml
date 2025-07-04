@@ -60,39 +60,7 @@
                     <span asp-validation-for="Description" class="text-red-600 text-xs mt-1"></span>
                 </div>
 
-                @* Dynamic Equipment Input Section (remains the same) *@
-                <div class="border border-gray-200 p-4 rounded-lg bg-gray-50">
-                    <h3 class="text-md font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                        ??? Equipment List
-                        <span class="text-sm text-gray-500">(Add multiple)</span>
-                    </h3>
-                    <div id="equipment-inputs" class="space-y-3">
-                        @if (Model.Equipment != null && Model.Equipment.Any())
-                        {
-                            for (int i = 0; i < Model.Equipment.Count; i++)
-                            {
-                                <div class="flex items-center gap-3">
-                                    <input type="text" name="EquipmentNames[@i]" value="@Model.Equipment[i].Name" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="e.g., Beaker, Safety Goggles" />
-                                    <button type="button" onclick="removeEquipmentField(this)" class="text-red-500 hover:text-red-700">
-                                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 6h8v2H6V6zm0 4h8v2H6v-2z" clip-rule="evenodd" /></svg>
-                                    </button>
-                                </div>
-                            }
-                        }
-                        else
-                        {
-                            <div class="flex items-center gap-3">
-                                <input type="text" name="EquipmentNames[0]" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="e.g., Beaker, Safety Goggles" />
-                                <button type="button" onclick="addEquipmentField()" class="text-blue-500 hover:text-blue-700">
-                                    <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                            </div>
-                        }
-                    </div>
-                    <span asp-validation-for="Equipment" class="text-red-600 text-xs mt-1 block"></span>
-                </div>
+              
 
                 <div class="flex justify-between mt-6">
                     <a asp-action="LabSettings" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
@@ -109,35 +77,7 @@
         </div>
     </div>
 
-    <script>
-        function addEquipmentField() {
-            var container = document.getElementById('equipment-inputs');
-            var inputCount = container.querySelectorAll('input[name^="EquipmentNames"]').length;
-            var newDiv = document.createElement('div');
-            newDiv.className = 'flex items-center gap-3 mt-2';
-            newDiv.innerHTML = `
-                <input type="text" name="EquipmentNames[${inputCount}]" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Equipment Name" />
-                <button type="button" onclick="removeEquipmentField(this)" class="text-red-500 hover:text-red-700">
-                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 6h8v2H6V6zm0 4h8v2H6v-2z" clip-rule="evenodd"/></svg>
-                </button>`;
-            container.appendChild(newDiv);
-            updateEquipmentFieldNames();
-        }
-
-        function removeEquipmentField(button) {
-            button.parentNode.remove();
-            updateEquipmentFieldNames();
-        }
-
-        function updateEquipmentFieldNames() {
-            var inputs = document.querySelectorAll('#equipment-inputs input[name^="EquipmentNames"]');
-            inputs.forEach((input, index) => {
-                input.name = `EquipmentNames[${index}]`;
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', updateEquipmentFieldNames);
-    </script>
+    
 
     @section Scripts {
         @{
