@@ -24,17 +24,28 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-            <div>
+             <div>
                 <h2 class="text-2xl font-bold text-gray-800">Pending Bookings</h2>
                 <p class="text-gray-600 mt-1">Review and manage laboratory equipment booking requests</p>
-            </div>
+            </div>  
+            @*  *@
+
+             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+ 
             <div class="flex gap-3">
+                <a href="/Supervisour/ApprovedBookings"
+                   class="inline-flex items-center gap-2 bg-green-100 text-green-800 font-medium text-sm px-4 py-2 rounded-lg hover:bg-green-200 transition-colors">
+                    <i class="fas fa-clock"></i>
+                    Approved  
+                </a>
                 <a href="/Supervisour/RejectedBookings"
-                   class="inline-flex items-center gap-2 bg-white border border-red-200 text-red-600 font-medium text-sm px-4 py-2 rounded-lg hover:bg-red-50 transition-colors">
+                   class="inline-flex items-center gap-2 bg-red-100 text-red-800 font-medium text-sm px-4 py-2 rounded-lg hover:bg-red-200 transition-colors">
                     <i class="fas fa-times-circle"></i>
-                    Rejected Bookings
+                    Rejected 
                 </a>
             </div>
+        </div>
+ 
         </div>
 
         <!-- Search & Filter Card -->

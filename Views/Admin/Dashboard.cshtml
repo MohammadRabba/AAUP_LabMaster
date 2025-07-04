@@ -19,181 +19,117 @@
                         secondary: '#10B981',
                         dark: '#1F2937',
                         light: '#F9FAFB'
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.08)',
+                        'soft-hover': '0 8px 25px -5px rgba(0, 0, 0, 0.1)'
                     }
                 }
             }
         }
     </script>
+    <style>
+        .action-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center;
+        }
+        .action-card:hover {
+            transform: translateY(-4px);
+        }
+        .icon-wrapper {
+            transition: all 0.3s ease;
+        }
+        .action-card:hover .icon-wrapper {
+            transform: scale(1.1);
+        }
+    </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
-
-    @* <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Header Section -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-dark">Dashboard Overview</h1>
-            <p class="text-gray-600 mt-2">Welcome back, <span class="font-semibold text-primary">@Model.FullName</span></p>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="mb-10">
+            <h1 class="text-3xl font-bold text-dark">Admin Dashboard</h1>
+            <p class="text-gray-600 mt-2">Welcome back, manage your lab resources efficiently</p>
         </div>
-
-        <!-- Stats Cards (optional) -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-primary">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500">Total Users</p>
-                        <h3 class="text-2xl font-bold text-dark mt-1">1,248</h3>
-                    </div>
-                    <div class="bg-primary/10 p-3 rounded-full">
-                        <i class="fas fa-users text-primary text-lg"></i>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-secondary">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500">Active Bookings</p>
-                        <h3 class="text-2xl font-bold text-dark mt-1">56</h3>
-                    </div>
-                    <div class="bg-secondary/10 p-3 rounded-full">
-                        <i class="fas fa-calendar-check text-secondary text-lg"></i>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-yellow-500">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500">Pending Requests</p>
-                        <h3 class="text-2xl font-bold text-dark mt-1">12</h3>
-                    </div>
-                    <div class="bg-yellow-500/10 p-3 rounded-full">
-                        <i class="fas fa-clock text-yellow-500 text-lg"></i>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-purple-500">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500">Equipment</p>
-                        <h3 class="text-2xl font-bold text-dark mt-1">84</h3>
-                    </div>
-                    <div class="bg-purple-500/10 p-3 rounded-full">
-                        <i class="fas fa-microscope text-purple-500 text-lg"></i>
-                    </div>
-                </div>
-            </div>
-        </div> *@
-
+        
         <!-- Quick Actions Section -->
-        <div class="mb-8">
-            <h2 class="text-xl font-semibold text-dark mb-4">Quick Actions</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="mb-12">
+            
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- Booking Management -->
-                <a href="/Admin/BookingManagement" class="group">
-                    <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 hover:border-primary/30 h-full">
-                        <div class="flex items-start space-x-4">
-                            <div class="bg-primary/10 p-3 rounded-lg text-primary group-hover:bg-primary/20 transition">
-                                <i class="fas fa-calendar-plus text-xl"></i>
+                @* <a href="/Admin/BookingManagement" class="group">
+                    <div class="action-card bg-white p-8 rounded-2xl shadow-soft hover:shadow-soft-hover border border-gray-100 hover:border-primary/50 h-full flex flex-col">
+                        <div class="flex-grow">
+                            <div class="icon-wrapper bg-primary/10 p-4 rounded-xl text-primary group-hover:bg-primary/20 inline-flex mb-6">
+                                <i class="fas fa-calendar-plus text-2xl"></i>
                             </div>
-                            <div>
-                                <h3 class="font-semibold text-dark group-hover:text-primary transition">Booking Management</h3>
-                                <p class="text-sm text-gray-600 mt-1">Add new booking requests for lab & equipment</p>
-                            </div>
+                            <h3 class="text-xl font-semibold text-dark group-hover:text-primary transition mb-3">Booking Management</h3>
+                            <p class="text-gray-600">Manage all lab equipment bookings and reservations</p>
+                        </div>
+                        <div class="mt-6 text-sm text-primary font-medium flex items-center">
+                            <span>Go to Bookings</span>
+                            <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
                         </div>
                     </div>
-                </a>
+                </a> *@
 
                 <!-- User Management -->
                 <a href="/Admin/UserManagement" class="group">
-                    <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 hover:border-secondary/30 h-full">
-                        <div class="flex items-start space-x-4">
-                            <div class="bg-secondary/10 p-3 rounded-lg text-secondary group-hover:bg-secondary/20 transition">
-                                <i class="fas fa-user-cog text-xl"></i>
+                    <div class="action-card bg-white p-8 rounded-2xl shadow-soft hover:shadow-soft-hover border border-gray-100 hover:border-secondary/50 h-full flex flex-col">
+                        <div class="flex-grow">
+                            <div class="icon-wrapper bg-secondary/10 p-4 rounded-xl text-secondary group-hover:bg-secondary/20 inline-flex mb-6">
+                                <i class="fas fa-user-cog text-2xl"></i>
                             </div>
-                            <div>
-                                <h3 class="font-semibold text-dark group-hover:text-secondary transition">User Management</h3>
-                                <p class="text-sm text-gray-600 mt-1">Manage all user accounts and permissions</p>
-                            </div>
+                            <h3 class="text-xl font-semibold text-dark group-hover:text-secondary transition mb-3">User Management</h3>
+                            <p class="text-gray-600">Control user accounts, roles and permissions</p>
+                        </div>
+                        <div class="mt-6 text-sm text-secondary font-medium flex items-center">
+                            <span>Manage Users</span>
+                            <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
                         </div>
                     </div>
                 </a>
 
                 <!-- Lab Settings -->
                 <a href="/Admin/LabSettings" class="group">
-                    <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 hover:border-purple-500/30 h-full">
-                        <div class="flex items-start space-x-4">
-                            <div class="bg-purple-500/10 p-3 rounded-lg text-purple-500 group-hover:bg-purple-500/20 transition">
-                                <i class="fas fa-flask text-xl"></i>
+                    <div class="action-card bg-white p-8 rounded-2xl shadow-soft hover:shadow-soft-hover border border-gray-100 hover:border-purple-500/50 h-full flex flex-col">
+                        <div class="flex-grow">
+                            <div class="icon-wrapper bg-purple-500/10 p-4 rounded-xl text-purple-500 group-hover:bg-purple-500/20 inline-flex mb-6">
+                                <i class="fas fa-flask text-2xl"></i>
                             </div>
-                            <div>
-                                <h3 class="font-semibold text-dark group-hover:text-purple-500 transition">Lab Settings</h3>
-                                <p class="text-sm text-gray-600 mt-1">Configure lab equipment and maintenance</p>
-                            </div>
+                            <h3 class="text-xl font-semibold text-dark group-hover:text-purple-500 transition mb-3">Lab Settings</h3>
+                            <p class="text-gray-600">Configure labs, equipment and maintenance</p>
+                        </div>
+                        <div class="mt-6 text-sm text-purple-500 font-medium flex items-center">
+                            <span>Lab Configuration</span>
+                            <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
                         </div>
                     </div>
                 </a>
 
                 <!-- Reports -->
                 <a href="/Admin/Reports" class="group">
-                    <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 hover:border-blue-500/30 h-full">
-                        <div class="flex items-start space-x-4">
-                            <div class="bg-blue-500/10 p-3 rounded-lg text-blue-500 group-hover:bg-blue-500/20 transition">
-                                <i class="fas fa-chart-bar text-xl"></i>
+                    <div class="action-card bg-white p-8 rounded-2xl shadow-soft hover:shadow-soft-hover border border-gray-100 hover:border-blue-500/50 h-full flex flex-col">
+                        <div class="flex-grow">
+                            <div class="icon-wrapper bg-blue-500/10 p-4 rounded-xl text-blue-500 group-hover:bg-blue-500/20 inline-flex mb-6">
+                                <i class="fas fa-chart-bar text-2xl"></i>
                             </div>
-                            <div>
-                                <h3 class="font-semibold text-dark group-hover:text-blue-500 transition">Reports & Statistics</h3>
-                                <p class="text-sm text-gray-600 mt-1">View lab usage analytics and reports</p>
-                            </div>
+                            <h3 class="text-xl font-semibold text-dark group-hover:text-blue-500 transition mb-3">Reports & Analytics</h3>
+                            <p class="text-gray-600">View lab usage statistics and generate reports</p>
+                        </div>
+                        <div class="mt-6 text-sm text-blue-500 font-medium flex items-center">
+                            <span>View Reports</span>
+                            <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
                         </div>
                     </div>
                 </a>
             </div>
         </div>
 
-        <!-- Recent Activity Section (optional) -->
-        <div class="bg-white rounded-xl shadow-sm p-6">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-xl font-semibold text-dark">Recent Activity</h2>
-                <a href="#" class="text-sm text-primary hover:underline">View all</a>
-            </div>
-            
-            <div class="space-y-4">
-                <div class="flex items-start space-x-4 p-3 hover:bg-gray-50 rounded-lg transition">
-                    <div class="bg-green-100 p-2 rounded-full">
-                        <i class="fas fa-check-circle text-green-500"></i>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm font-medium">New booking confirmed</p>
-                        <p class="text-xs text-gray-500">Lab 3 - Microscope for John Doe</p>
-                    </div>
-                    <span class="text-xs text-gray-400">2 hours ago</span>
-                </div>
-                
-                <div class="flex items-start space-x-4 p-3 hover:bg-gray-50 rounded-lg transition">
-                    <div class="bg-blue-100 p-2 rounded-full">
-                        <i class="fas fa-user-plus text-blue-500"></i>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm font-medium">New user registered</p>
-                        <p class="text-xs text-gray-500">Researcher: Sarah Johnson</p>
-                    </div>
-                    <span class="text-xs text-gray-400">5 hours ago</span>
-                </div>
-                
-                <div class="flex items-start space-x-4 p-3 hover:bg-gray-50 rounded-lg transition">
-                    <div class="bg-yellow-100 p-2 rounded-full">
-                        <i class="fas fa-exclamation-triangle text-yellow-500"></i>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm font-medium">Maintenance required</p>
-                        <p class="text-xs text-gray-500">Spectrophotometer in Lab 2</p>
-                    </div>
-                    <span class="text-xs text-gray-400">1 day ago</span>
-                </div>
-            </div>
+        
+      
         </div>
     </div>
-
 </body>
 </html>

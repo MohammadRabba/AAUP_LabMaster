@@ -47,8 +47,45 @@ namespace AAUP_LabMaster.Controllers
         {
             return View(new UserDTO());
         }
-        [HttpPut]
+
+        [HttpGet]
+        public IActionResult UpdateUser(int id)
+        {
+            var user = adminManager.getAllUsers().FirstOrDefault(u => u.Id == id);
+            if (user == null)
+                return NotFound();
+
+            var dto = new UserDTO
+            {
+                FullName = user.FullName,
+                Email = user.Email,
+                Password = user.Password,
+                ConfirmPassword = user.Password,
+                PhoneNumber = user.PhoneNumber,
+                SelectedRoleName = user.Role,
+                Specialist = user is Supervisour sup ? sup.Specialist : null,
+                type = user is Client cli ? cli.type : null
+            };
+
+            return View(dto);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult UpdateUser(UserDTO user)
+        {
+            if (!ModelState.IsValid)
+                return View(user);
+
+            adminManager.UpdateUser(user); // This uses Email to identify the user
+            TempData["Message"] = "User Updated successfully.";
+            return RedirectToAction("UserManagement");
+        }
+
+        
+        [HttpPut]
+        public IActionResult UpdateUser123(UserDTO user)
         {
             if (!ModelState.IsValid)
             {

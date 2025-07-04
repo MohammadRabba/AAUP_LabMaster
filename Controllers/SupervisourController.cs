@@ -306,32 +306,18 @@ namespace AAUP_LabMaster.Controllers
         {
             try
             {
-                bookingManager.updateBookingStatus(id, status); // this sets booking.status = status
-                TempData["Message"] = "Booking status updated successfully.";
+                superManager.updateBookingStatus(id, status);
+                TempData["Message"] = "Booking status updated and notification sent.";
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error updating booking status: {ex.Message}";
+                TempData["ErrorMessage"] = "Error: " + ex.Message;
             }
 
             return RedirectToAction("getAllBookingsSupervisour");
         }
 
-
-        // public IActionResult updateBookingStatus(int id, Booking.BookStatus status)
-        // {
-        //     try
-        //     {
-        //         bookingManager.updateBookingStatus(id, status);
-        //         TempData["Message"] = "Booking status updated successfully.";
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         TempData["ErrorMessage"] = $"Error updating booking status: {ex.Message}";
-        //     }
-        //     // Redirect to the bookings page or wherever appropriate
-        //     return RedirectToAction("getAllBookingsSupervisour");
-        // }
+ 
         [HttpGet]
         public IActionResult getAllBookingsSupervisour(string name, string date, string equipment, string lab, string sortOrder)
         {

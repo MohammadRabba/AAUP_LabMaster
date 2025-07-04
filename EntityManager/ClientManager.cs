@@ -99,7 +99,26 @@ namespace AAUP_LabMaster.EntityManager
                 .OrderByDescending(n => n.DateCreated)
                 .ToList();
         }
+        
         public List<Booking> GetMyBookings()
+            {
+                var userIdString = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+                {
+                    Console.WriteLine("User ID claim not found or user not authenticated.");
+                    return new List<Booking>();
+                }
+
+                // FIX: Include Equipment and Lab
+                return context.Bookings
+                    .Include(b => b.Equipment)
+                        .ThenInclude(e => e.Lab)
+                    .Include(b => b.Client)
+                    .Where(b => b.ClientId == userId)
+                    .ToList();
+            }
+        public List<Booking> GetMyBookings123()
         {
             var userIdString = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
 

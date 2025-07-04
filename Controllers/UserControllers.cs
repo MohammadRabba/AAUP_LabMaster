@@ -140,19 +140,48 @@ namespace AAUP_LabMaster.Controllers
             });
         }
 
-        [HttpGet]
-        public IActionResult MyRequests()
-        {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (!int.TryParse(userIdClaim, out int userId))
-            {
-                return RedirectToAction("Login", "Account");
-            }
+        // [HttpGet]
+        // public IActionResult MyRequests()
+        // {
+        //     var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //     if (!int.TryParse(userIdClaim, out int userId))
+        //     {
+        //         return RedirectToAction("Login", "Account");
+        //     }
 
-            var requests = clientManager.GetMyBookings();
-            Console.WriteLine("requests.Count: " + requests.Count);
-            return View(requests);
+        //     var requests = clientManager.GetMyBookings();
+        //     Console.WriteLine("requests.Count: " + requests.Count);
+        //     return View(requests);
+        // }
+
+
+       public IActionResult MyRequests(string equipment, string lab, string date, string sortOrder)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var requests = clientManager.GetMyBookings()
+                .Where(b => b.ClientId == userId)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(equipment))
+                requests = requests.Where(b => b.Equipment.Name.Contains(equipment, StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrEmpty(lab))
+                requests = requests.Where(b => b.Equipment.Lab.Name.Contains(lab, StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrEmpty(date) && DateTime.TryParse(date, out var parsedDate))
+                requests = requests.Where(b => b.Date.Date == parsedDate.Date);
+
+            sortOrder = string.IsNullOrEmpty(sortOrder) ? "desc" : sortOrder;
+            requests = sortOrder == "desc"
+                ? requests.OrderByDescending(b => b.Date)
+                : requests.OrderBy(b => b.Date);
+
+            ViewBag.SearchEquipment = equipment;
+            ViewBag.SearchLab = lab;
+            ViewBag.SearchDate = date;
+            ViewBag.SortOrder = sortOrder;
+
+            return View(requests.ToList());
         }
+
 
 
 
@@ -167,7 +196,7 @@ namespace AAUP_LabMaster.Controllers
         //     return View(equipments);
         // }
 
-       [Authorize(Roles = "Client,Supervisour")]
+        [Authorize(Roles = "Client,Supervisour")]
         public IActionResult ViewAvailableEquipments()
         {
             var equipments = equipmentManager.GetAllEquipments();

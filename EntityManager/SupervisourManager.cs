@@ -17,7 +17,44 @@ namespace AAUP_LabMaster.EntityManager
             this.context = context;
             _httpContextAccessor = httpContextAccessor;
         }
-        public void updateBookingStatus(int id,Booking.BookStatus status)
+        
+
+
+
+
+        public void updateBookingStatus(int id, Booking.BookStatus status)
+            {
+                var booking = context.Bookings
+                    .Include(b => b.Client)
+                    .Include(b => b.Equipment)
+                        .ThenInclude(e => e.Lab)
+                    .FirstOrDefault(b => b.Id == id);
+
+                 
+
+                booking.status = status;
+                context.SaveChanges();
+
+                string statusMessage = status switch
+                {
+                    Booking.BookStatus.Approved => "approved",
+                    Booking.BookStatus.Rejected => "rejected",
+                    _ => "updated"
+                };
+
+                var notification = new Notification
+                {
+                    UserId = booking.ClientId,
+                    Message = $"Your booking for equipment '{booking.Equipment?.Name}' in lab '{booking.Equipment?.Lab?.Name}' on {booking.Date:MMM dd, yyyy} at {booking.Date:hh:mm tt} has been {statusMessage}.",
+                    DateCreated = DateTime.Now
+                };
+
+                context.Notifications.Add(notification);
+                context.SaveChanges();
+            }
+
+
+        public void updateBookingStatus12(int id, Booking.BookStatus status)
         {
             bookingManager.updateBookingStatus(id, status);
         }
