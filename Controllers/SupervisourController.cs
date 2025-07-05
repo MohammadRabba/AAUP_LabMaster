@@ -62,7 +62,6 @@ namespace AAUP_LabMaster.Controllers
         [HttpGet]
         public IActionResult AddNewEquipment(int? id)
         {
-            // --- FIX: ALWAYS ensure ViewBag.Labs is populated ---
             ViewBag.Labs = labManager.getAllLabs();
             if (ViewBag.Labs == null) // Defensive check, though getAllLabs should return empty list, not null
             {
@@ -88,6 +87,113 @@ namespace AAUP_LabMaster.Controllers
             return View(model); // Pass the model to the view
         }
 
+        //[HttpGet]
+        //public IActionResult UpdateEquipment1(int? id)
+        //{
+        //    ViewBag.Labs = labManager.getAllLabs() ?? new List<Lab>();
+
+        //    if (!id.HasValue || id <= 0)
+        //    {
+        //        TempData["ErrorMessage"] = "Invalid equipment ID.";
+        //        return RedirectToAction("Index");
+        //    }
+
+        //    var equipment = equipmentManager.GetEquipmentById(id.Value);
+        //    if (equipment == null)
+        //    {
+        //        TempData["ErrorMessage"] = $"Equipment with ID {id.Value} not found.";
+        //        return RedirectToAction("Index");
+        //    }
+
+        //    return View(equipment);
+        //}
+        //[HttpPost]
+        //[ValidateAntiForgeryToken] 
+        //public async Task<IActionResult> UpdateEquipment2(EquipmentDTO equipmentDto)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        ViewBag.Labs = labManager.getAllLabs();
+        //        // Pass the DTO back to the view so form fields are repopulated with user's input
+        //        return View(equipmentDto);
+        //    }
+
+        //    try
+        //    {
+        //        var existingEquipment = equipmentManager.GetEquipmentById(equipmentDto.Id);
+        //        if (existingEquipment == null)
+        //        {
+        //            TempData["ErrorMessage"] = $"Equipment with ID {equipmentDto.Id} not found.";
+        //            // Redirecting to list view if equipment is not found
+        //            return RedirectToAction("GetEquipmentByLabId", new { id = equipmentDto.LabId });
+        //        }
+
+        //        // --- 1. Handle Image File Upload ---
+        //        if (equipmentDto.ImageFile != null && equipmentDto.ImageFile.Length > 0)
+        //        {
+        //            // Delete old image file if it exists and a new one is uploaded
+        //            if (!string.IsNullOrEmpty(existingEquipment.ImagePath))
+        //            {
+        //                // Construct the full physical path to the old image file
+        //                // Use TrimStart('/') to remove leading slash before combining with WebRootPath
+        //                var oldImageFullPath = Path.Combine(_webHostEnvironment.WebRootPath, existingEquipment.ImagePath.TrimStart('/'));
+        //                if (System.IO.File.Exists(oldImageFullPath))
+        //                {
+        //                    System.IO.File.Delete(oldImageFullPath);
+        //                }
+        //            }
+
+        //            // Define the upload folder path. Use Path.Combine correctly.
+        //            var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "img"); // This will resolve to wwwroot/img
+        //            if (!Directory.Exists(uploadsFolder))
+        //            {
+        //                Directory.CreateDirectory(uploadsFolder);
+        //            }
+
+        //            // Generate a unique file name to prevent overwriting issues
+        //            string uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(equipmentDto.ImageFile.FileName);
+        //            var newFilePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+        //            // Save the new file
+        //            using (var fileStream = new FileStream(newFilePath, FileMode.Create))
+        //            {
+        //                await equipmentDto.ImageFile.CopyToAsync(fileStream);
+        //            }
+
+        //            existingEquipment.ImagePath = "/img/" + uniqueFileName; 
+        //        }
+              
+
+
+        //        existingEquipment.Name = equipmentDto.Name;
+        //        existingEquipment.Description = equipmentDto.Description;
+        //        existingEquipment.Quantity = equipmentDto.Quantity;
+        //        existingEquipment.Price = equipmentDto.Price;
+        //        existingEquipment.status = equipmentDto.status;
+        //        existingEquipment.LabId = equipmentDto.LabId;
+
+          
+        //        existingEquipment.Link = equipmentDto.linkUrl; 
+
+
+        //        // --- 4. Persist Changes to the Database ---
+        //        equipmentManager.UpdateEquipment(existingEquipment); // This should update the tracked entity
+
+        //        TempData["Message"] = "Equipment updated successfully!";
+        //        return RedirectToAction("GetEquipmentByLabId", new { id = existingEquipment.LabId });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log the full exception for debugging, not just the message
+        //        // _logger.LogError(ex, "Error updating equipment with ID {EquipmentId}", equipmentDto.Id);
+
+        //        TempData["ErrorMessage"] = $"Error updating equipment: {ex.Message}";
+        //        ViewBag.Labs = labManager.getAllLabs();
+        //        // Pass the DTO back to the view in case of error
+        //        return View(equipmentDto);
+        //    }
+        //}
+
         [HttpGet]
         public IActionResult UpdateEquipment(int? id)
         {
@@ -96,170 +202,93 @@ namespace AAUP_LabMaster.Controllers
             if (!id.HasValue || id <= 0)
             {
                 TempData["ErrorMessage"] = "Invalid equipment ID.";
-                return RedirectToAction("Index");
+                return RedirectToAction("GetEquipmentByLabId");
             }
 
             var equipment = equipmentManager.GetEquipmentById(id.Value);
             if (equipment == null)
             {
                 TempData["ErrorMessage"] = $"Equipment with ID {id.Value} not found.";
-                return RedirectToAction("Index");
+                return RedirectToAction("ViewAllEquipments");
             }
 
+            // Return the Equipment model directly instead of converting to DTO
             return View(equipment);
         }
         [HttpPost]
-        [ValidateAntiForgeryToken] // Always recommended for POST actions that modify data
-        public async Task<IActionResult> UpdateEquipment(EquipmentDTO equipmentDto)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateEquipment(Equipment equipment, IFormFile ImageFile)
         {
             if (!ModelState.IsValid)
             {
                 ViewBag.Labs = labManager.getAllLabs();
-                // Pass the DTO back to the view so form fields are repopulated with user's input
-                return View(equipmentDto);
+                return View(equipment);
             }
 
             try
             {
-                var existingEquipment = equipmentManager.GetEquipmentById(equipmentDto.Id);
+                var existingEquipment = equipmentManager.GetEquipmentById(equipment.Id);
                 if (existingEquipment == null)
                 {
-                    TempData["ErrorMessage"] = $"Equipment with ID {equipmentDto.Id} not found.";
-                    // Redirecting to list view if equipment is not found
-                    return RedirectToAction("GetEquipmentByLabId", new { id = equipmentDto.LabId });
+                    TempData["ErrorMessage"] = $"Equipment with ID {equipment.Id} not found.";
+                    return RedirectToAction("ViewAllEquipments");
                 }
 
-                // --- 1. Handle Image File Upload ---
-                if (equipmentDto.ImageFile != null && equipmentDto.ImageFile.Length > 0)
+                // Handle Image File Upload
+                if (ImageFile != null && ImageFile.Length > 0)
                 {
-                    // Delete old image file if it exists and a new one is uploaded
+                    // Delete old image if exists
                     if (!string.IsNullOrEmpty(existingEquipment.ImagePath))
                     {
-                        // Construct the full physical path to the old image file
-                        // Use TrimStart('/') to remove leading slash before combining with WebRootPath
-                        var oldImageFullPath = Path.Combine(_webHostEnvironment.WebRootPath, existingEquipment.ImagePath.TrimStart('/'));
-                        if (System.IO.File.Exists(oldImageFullPath))
+                        var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath,
+                            existingEquipment.ImagePath.TrimStart('/'));
+                        if (System.IO.File.Exists(oldImagePath))
                         {
-                            System.IO.File.Delete(oldImageFullPath);
+                            System.IO.File.Delete(oldImagePath);
                         }
                     }
 
-                    // Define the upload folder path. Use Path.Combine correctly.
-                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "img"); // This will resolve to wwwroot/img
-                    if (!Directory.Exists(uploadsFolder))
-                    {
-                        Directory.CreateDirectory(uploadsFolder);
-                    }
-
-                    // Generate a unique file name to prevent overwriting issues
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(equipmentDto.ImageFile.FileName);
-                    var newFilePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                    // Save the new file
-                    using (var fileStream = new FileStream(newFilePath, FileMode.Create))
-                    {
-                        await equipmentDto.ImageFile.CopyToAsync(fileStream);
-                    }
-
-                    existingEquipment.ImagePath = "/img/" + uniqueFileName; 
-                }
-              
-
-
-                existingEquipment.Name = equipmentDto.Name;
-                existingEquipment.Description = equipmentDto.Description;
-                existingEquipment.Quantity = equipmentDto.Quantity;
-                existingEquipment.Price = equipmentDto.Price;
-                existingEquipment.status = equipmentDto.status;
-                existingEquipment.LabId = equipmentDto.LabId;
-
-          
-                existingEquipment.Link = equipmentDto.linkUrl; 
-
-
-                // --- 4. Persist Changes to the Database ---
-                equipmentManager.UpdateEquipment(existingEquipment); // This should update the tracked entity
-
-                TempData["Message"] = "Equipment updated successfully!";
-                return RedirectToAction("GetEquipmentByLabId", new { id = existingEquipment.LabId });
-            }
-            catch (Exception ex)
-            {
-                // Log the full exception for debugging, not just the message
-                // _logger.LogError(ex, "Error updating equipment with ID {EquipmentId}", equipmentDto.Id);
-
-                TempData["ErrorMessage"] = $"Error updating equipment: {ex.Message}";
-                ViewBag.Labs = labManager.getAllLabs();
-                // Pass the DTO back to the view in case of error
-                return View(equipmentDto);
-            }
-        }
-
-
-        [HttpPost]
-        [ValidateAntiForgeryToken] // Always recommended for POST actions that modify data
-        public async Task<IActionResult> AddNewEquipmentAsync(EquipmentDTO equipmentDto) // Renamed parameter for clarity
-        {
-            if (!ModelState.IsValid)
-            {
-                // قم بإعادة البيانات مع رسالة الخطأ
-                ViewBag.Labs = labManager.getAllLabs();
-                return View(equipmentDto); // Pass the DTO back to the view to repopulate fields
-            }
-
-            try
-            {
-                string? imagePath = null; 
-
-                // Handle Image File Upload
-                if (equipmentDto.ImageFile != null && equipmentDto.ImageFile.Length > 0)
-                {
-                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "img"); 
-
+                    // Save new image
+                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "img");
                     if (!Directory.Exists(uploadsFolder))
                         Directory.CreateDirectory(uploadsFolder);
 
-                    // Use Path.GetFileName to ensure only the file name   from the client's input
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(equipmentDto.ImageFile.FileName);
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" +
+                        Path.GetFileName(ImageFile.FileName);
                     var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
-                        await equipmentDto.ImageFile.CopyToAsync(fileStream);
+                        await ImageFile.CopyToAsync(fileStream);
                     }
 
-                    // Set the imagePath for the Equipment entity
-                    imagePath = "/img/" + uniqueFileName; // This is the relative URL for the database
+                    existingEquipment.ImagePath = "/img/" + uniqueFileName;
                 }
 
-                // Create a new Equipment entity from the DTO
-                var newEquipment = new Equipment
-                {
-                    Name = equipmentDto.Name,
-                    Description = equipmentDto.Description,
-                    Quantity = equipmentDto.Quantity,
-                    Price = equipmentDto.Price,
-                    status = equipmentDto.status,
-                    LabId = equipmentDto.LabId,
-                    ImagePath = imagePath, 
-                    Link = equipmentDto.linkUrl
-                };
+                // Update other properties
+                existingEquipment.Name = equipment.Name;
+                existingEquipment.Description = equipment.Description;
+                existingEquipment.Quantity = equipment.Quantity;
+                existingEquipment.Price = equipment.Price;
+                existingEquipment.status = equipment.status;
+                existingEquipment.LabId = equipment.LabId;
+                existingEquipment.Link = equipment.Link;
 
-                var addedEquipment = equipmentManager.AddEquipment(newEquipment); // Call your AddEquipment method
-                TempData["Message"] = "Equipment added successfully!";
-                return RedirectToAction("GetEquipmentByLabId", new { id = addedEquipment.LabId }); // Redirect using the ID of the newly added equipment
+                // Save changes
+                equipmentManager.UpdateEquipment(existingEquipment);
+
+                TempData["Message"] = "Equipment updated successfully!";
+                return RedirectToAction("ViewAllEquipments", new { id = existingEquipment.LabId });
             }
             catch (Exception ex)
             {
-                // Log the full exception for debugging, not just the message
-                // _logger.LogError(ex, "Error adding new equipment.");
-
-                TempData["ErrorMessage"] = $"Error adding equipment: {ex.Message}";
+                TempData["ErrorMessage"] = $"Error updating equipment: {ex.Message}";
                 ViewBag.Labs = labManager.getAllLabs();
-                return View(equipmentDto); // Return the DTO to repopulate the form
+                return View(equipment);
             }
         }
 
+        // Save changes
 
         public List<Equipment> GetAllEquipments()
         {
@@ -427,6 +456,51 @@ namespace AAUP_LabMaster.Controllers
             ViewBag.SortOrder = sortOrder;
 
             return View("RejectedBookings", rejected.ToList());
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddNewEquipment(EquipmentDTO equipmentDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Labs = labManager.getAllLabs();
+                return View(equipmentDto);
+            }
+
+            try
+            {
+                string imagePath = equipmentDto.ImageFile != null
+                    ? "/img/" + equipmentDto.ImageFile.FileName
+                    : "/img/courses-6.jpg";
+
+                var newEquipment = new Equipment
+                {
+                    Name = equipmentDto.Name,
+                    Description = equipmentDto.Description,
+                    Quantity = equipmentDto.Quantity,
+                    Price = equipmentDto.Price,
+                    status = equipmentDto.status,
+                    LabId = equipmentDto.LabId,
+                    ImagePath = imagePath,
+                    Link = equipmentDto.linkUrl
+                };
+
+                var addedEquipment = equipmentManager.AddEquipment(newEquipment);
+
+                if (addedEquipment == null || addedEquipment.Id == 0)
+                {
+                    throw new Exception("Failed to save equipment to database");
+                }
+
+                TempData["Message"] = "Equipment added successfully!";
+                return RedirectToAction("GetEquipmentByLabId", new { id = addedEquipment.LabId });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error adding equipment: {ex.Message}";
+                ViewBag.Labs = labManager.getAllLabs();
+                return View(equipmentDto);
+            }
         }
 
         public IActionResult DeleteEquipment(int id) // Action name is DeleteEquipment, no need for ActionName attribute if matching route

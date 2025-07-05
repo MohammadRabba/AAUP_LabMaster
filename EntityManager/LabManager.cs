@@ -8,11 +8,13 @@ namespace AAUP_LabMaster.EntityManager
     public class LabManager
     {
         private readonly ApplicationDbContext context; private readonly SupervisourManager superManager;
+        private readonly EquipmentManager equipManager;
 
-        public LabManager(ApplicationDbContext context, SupervisourManager superManager)
+        public LabManager(ApplicationDbContext context, SupervisourManager superManager,EquipmentManager equipmentManager)
         {
             this.context = context;
             this.superManager = superManager;
+            this.equipManager = equipmentManager;
         }
 
         public void AddLab(LabDTO lab)
@@ -34,14 +36,7 @@ namespace AAUP_LabMaster.EntityManager
                 SupervisorId = supervisor.Id,
                 Supervisour = supervisor
             };
-            //if (equipments != null && equipments.Any())
-            //{
-            //    newlab.Equipment = equipments
-            //                        .Where(eName => !string.IsNullOrWhiteSpace(eName)) 
-            //                        .Select(eName => new Equipment { Name = eName })
-            //                        .ToList();
-            //}
-
+         
             context.Labs.Add(newlab);
             context.SaveChanges();
         }
@@ -50,7 +45,7 @@ namespace AAUP_LabMaster.EntityManager
             var lab = context.Labs
                 .Include(l => l.Supervisour)
                 .Include(l => l.Equipment)
-                .FirstOrDefault(l => l.Id == id);
+                .FirstOrDefault(l => l.Id == id&&l.Name!="Empty Lab");
 
             return lab;
         }
@@ -59,14 +54,14 @@ namespace AAUP_LabMaster.EntityManager
             
 
             return context.Labs
-              .Include(l => l.Supervisour) 
+              .Include(l => l.Supervisour).Where(l => l.Name != "Empty Lab")
               .ToList();
         }
         public bool UpdateLab(LabDTO labDto)
         {
             var existingLab = context.Labs
                                     .Include(l => l.Equipment) 
-                                    .FirstOrDefault(l => l.Name == labDto.Name);
+                                    .FirstOrDefault(l => l.Name == labDto.Name&&l.Name!="Empty Lab");
 
             if (existingLab == null)
             {
@@ -76,9 +71,7 @@ namespace AAUP_LabMaster.EntityManager
             existingLab.Name = labDto.Name;
             existingLab.Description = labDto.Description ?? "";
 
-            // Supervisor update logic (based on your chosen approach - editable or not)
-            // Assuming the EditLab form sends SelectedSupervisorId as FullName if editable,
-            // or originalLab.Supervisour?.FullName if not editable from that specific form.
+
             var newSupervisor = context.Supervisours.FirstOrDefault(s => s.FullName == labDto.SelectedSupervisorId);
             if (newSupervisor != null)
             {
@@ -90,11 +83,27 @@ namespace AAUP_LabMaster.EntityManager
             context.SaveChanges();
             return true;
         }
+        public async Task RemoveLabAsync(int labId)
+        {
+            var lab = await context.Labs.FindAsync(labId);
+            if (lab != null)
+            {
+                context.Labs.Remove(lab);
+                await context.SaveChangesAsync();
+            }
+        }
         public void RemoveLab(int id)
         {
-            var exsistingLab = context.Labs.FirstOrDefault(x => x.Id == id);
+            var exsistingLab = context.Labs.Include(l => l.Equipment).FirstOrDefault(x => x.Id == id);
+            var EmptyLab = context.Labs.FirstOrDefault(x => x.Name == "Empty Lab"&&x.Description=="Empty Lab"&&x.SupervisorId==exsistingLab.SupervisorId);
+
             if (exsistingLab != null)
             {
+                foreach (var equipment in exsistingLab.Equipment.ToList())
+                {
+                    equipment.LabId = EmptyLab.Id; 
+                    equipManager.UpdateEquipment (equipment);            
+                }
                 context.Labs.Remove(exsistingLab);
                 context.SaveChanges();
                 Console.WriteLine("Lab Removed successfully.");

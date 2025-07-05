@@ -56,6 +56,7 @@ namespace AAUP_LabMaster.EntityManager
             existingEquipment.LabId = equipment.LabId;
             existingEquipment.ImagePath = equipment.ImagePath;
             existingEquipment.Link = equipment.Link;
+
             context.SaveChanges();
             return true;
         }

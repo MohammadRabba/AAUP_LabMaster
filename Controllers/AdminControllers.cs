@@ -70,20 +70,27 @@ namespace AAUP_LabMaster.Controllers
             return View(dto);
         }
 
-
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult UpdateUser(UserDTO user)
         {
             if (!ModelState.IsValid)
+            {
                 return View(user);
+            }
 
-            adminManager.UpdateUser(user); // This uses Email to identify the user
-            TempData["Message"] = "User Updated successfully.";
-            return RedirectToAction("UserManagement");
+            try
+            {
+                adminManager.UpdateUser(user);
+                TempData["SuccessMessage"] = "User updated successfully";
+                return RedirectToAction("UserManagement");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return View(user);
+            }
         }
 
-        
         [HttpPut]
         public IActionResult UpdateUser123(UserDTO user)
         {

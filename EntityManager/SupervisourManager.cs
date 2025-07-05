@@ -44,8 +44,8 @@ namespace AAUP_LabMaster.EntityManager
 
                 var notification = new Notification
                 {
-                    UserId = booking.ClientId,
-                    Message = $"Your booking for equipment '{booking.Equipment?.Name}' in lab '{booking.Equipment?.Lab?.Name}' on {booking.Date:MMM dd, yyyy} at {booking.Date:hh:mm tt} has been {statusMessage}.",
+                    UserId = booking.ClientId,Subject="Booking Status Update",
+                    Body = $"Your booking for equipment '{booking.Equipment?.Name}' in lab '{booking.Equipment?.Lab?.Name}' on {booking.Date:MMM dd, yyyy} at {booking.Date:hh:mm tt} has been {statusMessage}.",
                     DateCreated = DateTime.Now
                 };
 
@@ -96,7 +96,7 @@ namespace AAUP_LabMaster.EntityManager
             }
             return context.Labs
                 .Include(l => l.Equipment)
-                .Where(l => l.SupervisorId == supervisorId)
+                .Where(l => l.SupervisorId == supervisorId&&l.Name!="Empty Lab")
                 .ToList();
         }
         public void ApproveBooking(int bookingId)
@@ -111,8 +111,8 @@ namespace AAUP_LabMaster.EntityManager
             context.SaveChanges();
             var notification = new Notification
             {
-                UserId = booking.ClientId,
-                Message = $"Your booking for {booking.Equipment.Lab.Name} on {booking.Date.ToShortDateString()} at {booking.Date.TimeOfDay} has been approved.",
+                UserId = booking.ClientId,Subject = "Booking Approved",
+                Body = $"Your booking for {booking.Equipment.Lab.Name} on {booking.Date.ToShortDateString()} at {booking.Date.TimeOfDay} has been approved.",
                 DateCreated = DateTime.Now
             };
             context.Notifications.Add(notification);

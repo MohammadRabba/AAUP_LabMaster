@@ -22,61 +22,91 @@ namespace AAUP_LabMaster.EntityManager
         }
         public bool Register(UserDTO user, out string message)
         {
-            User doc;
+            using var transaction = dbcontext.Database.BeginTransaction();
 
-            var check = dbcontext.Users.FirstOrDefault(x => x.Email == user.Email);
-            if (check != null)
+            try
             {
-                message = "Email already registered.";
-                return false;  // فشل التسجيل
-            }
-
-            if (user.SelectedRoleName == "Admin")
-            {
-                doc = new Admin
+                if (dbcontext.Users.Any(x => x.Email == user.Email))
                 {
-                    FullName = user.FullName,
-                    Email = user.Email,
-                    Password = user.Password,
-                    PhoneNumber = user.PhoneNumber,
-                    Role = user.SelectedRoleName
-                };
-                dbcontext.Admins.Add((Admin)doc);
-            }
-            else if (user.SelectedRoleName == "Client")
-            {
-                doc = new Client
-                {
-                    FullName = user.FullName,
-                    Email = user.Email,
-                    Password = user.Password,
-                    PhoneNumber = user.PhoneNumber,
-                    Role = user.SelectedRoleName,
-                    type = (Client.Type)user.type
-                };
-                dbcontext.Clients.Add((Client)doc);
-            }
-            else 
-            {
-                doc = new Supervisour
-                {
-                    FullName = user.FullName,
-                    Email = user.Email,
-                    Password = user.Password,
-                    PhoneNumber = user.PhoneNumber,
-                    Role = user.SelectedRoleName,
-                    Specialist = user.Specialist // Make sure UserDTO has this property
-                };
-                dbcontext.Supervisours.Add((Supervisour)doc);
-            }
+                    message = "Email already registered.";
+                    return false;
+                }
 
-            dbcontext.Users.Add(doc);
-            dbcontext.SaveChanges();
-            dbcontext.SaveChanges();
+                User newUser;
 
-            message = "User registered successfully!";
-            return true;
+                if (user.SelectedRoleName == "Admin")
+                {
+                    newUser = new Admin
+                    {
+                        FullName = user.FullName,
+                        Email = user.Email,
+                        Password = user.Password,
+                        PhoneNumber = user.PhoneNumber,
+                        Role = user.SelectedRoleName
+                    };
+                    dbcontext.Admins.Add((Admin)newUser);
+                }
+                else if (user.SelectedRoleName == "Client")
+                {
+                    newUser = new Client
+                    {
+                        FullName = user.FullName,
+                        Email = user.Email,
+                        Password = user.Password,
+                        PhoneNumber = user.PhoneNumber,
+                        Role = user.SelectedRoleName,
+                        type = (Client.Type)user.type
+                    };
+                    dbcontext.Clients.Add((Client)newUser);
+                }
+                else if (user.SelectedRoleName == "Supervisour")
+                {
+                    newUser = new Supervisour
+                    {
+                        FullName = user.FullName,
+                        Email = user.Email,
+                        Password = user.Password,
+                        PhoneNumber = user.PhoneNumber,
+                        Role = user.SelectedRoleName,
+                        Specialist = user.Specialist
+                    };
+                    dbcontext.Supervisours.Add((Supervisour)newUser);
+                }
+                else
+                {
+                    message = "Invalid role specified.";
+                    return false;
+                }
+
+                dbcontext.SaveChanges();
+
+                if (user.SelectedRoleName == "Supervisour")
+                {
+                    var lab = new Lab
+                    {
+                        Name = "Empty Lab",
+                        Description = "Empty Lab",
+                        SupervisorId = newUser.Id,
+                                                SupervisourId = newUser.Id
+
+                    };
+
+                    dbcontext.Labs.Add(lab);
+                    dbcontext.SaveChanges();
+                }
+
+                transaction.Commit();
+                message = "User registered successfully!";
+                return true;
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                message = $"Registration failed: {ex.Message}";
+                return false;
+            }
         }
+
         public bool ForgetPassword(string email, string phoneMumber,string name)
         {
             var user = dbcontext.Users.FirstOrDefault(u => u.Email == email&&u.PhoneNumber==phoneMumber&&u.FullName==name);

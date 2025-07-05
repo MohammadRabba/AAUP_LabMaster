@@ -27,7 +27,17 @@ namespace AAUP_LabMaster.Models
                 .HasOne(b => b.Client)
                 .WithMany(c => c.Bookings)
                 .HasForeignKey(b => b.ClientId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict); 
+            modelBuilder.Entity<Lab>()
+        .HasOne(l => l.Supervisour)
+        .WithMany()
+        .HasForeignKey(l => l.SupervisorId)
+        .OnDelete(DeleteBehavior.Restrict); 
+            modelBuilder.Entity<Lab>()
+        .HasOne(l => l.Supervisour)
+        .WithMany(s => s.Labs)
+        .HasForeignKey(l => l.SupervisourId)
+        .OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Equipment>()
             .Ignore(e => e.ImageFile);
             modelBuilder.Entity<Booking>()

@@ -9,6 +9,7 @@
         public string FullName { get; set; }
         public string PhoneNumber { get; set; } = string.Empty;
         public string Role { get; set; }
+        public string Discriminator { get; set; }
 
         public User(int id, string FullName, string email, string role)
         {
@@ -16,6 +17,7 @@
             this.FullName = FullName;
             Email = email;
             Role = role;
+            Discriminator = role;
         }
         public User() { }
     }

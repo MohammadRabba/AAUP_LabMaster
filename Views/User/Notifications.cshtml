@@ -57,11 +57,19 @@
                   {
                     <i class="fas fa-envelope text-[#9B0B0B]"></i>
                   }
-                </div>
+                                    </div>  <div class="ml-4 flex-1">
+                                        <div class="flex items-center justify-between">
+                                            <p class="text-sm font-medium @(note.IsRead ? "text-gray-600" : "text-gray-900")">
+                                                @note.Subject
+                                            </p>
+                                            <span class="text-xs text-gray-500 ml-2 whitespace-nowrap">
+                                                @note.DateCreated.ToString("MMM dd, yyyy h:mm tt")
+                                            </span>
+                                        </div>
                 <div class="ml-4 flex-1">
                   <div class="flex items-center justify-between">
                     <p class="text-sm font-medium @(note.IsRead ? "text-gray-600" : "text-gray-900")">
-                      @note.Message
+                      @note.Body
                     </p>
                     <span class="text-xs text-gray-500 ml-2 whitespace-nowrap">
                       @note.DateCreated.ToString("MMM dd, yyyy h:mm tt")

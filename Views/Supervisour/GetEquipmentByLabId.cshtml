@@ -56,7 +56,10 @@
                                     <input type="hidden" name="id" value="@eq.Id" />
                                     <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded">Delete</button>
                                 </form>
-                                <a asp-action="UpdateEquipment" asp-route-id="@eq.Id" class="bg-blue-500 text-white px-2 py-1 rounded ml-2">Edit</a>
+                                <a asp-action="UpdateEquipment" asp-controller="Supervisour" asp-route-id="@eq.Id"
+                                   class="bg-blue-500 text-white px-2 py-1 rounded ml-2">
+                                    Edit
+                                </a>
                             </td>
                         </tr>
                     }
