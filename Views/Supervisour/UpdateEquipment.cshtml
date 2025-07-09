@@ -62,7 +62,7 @@
         <form asp-action="UpdateEquipment"
               asp-controller="Supervisour"
               method="post"
-              enctype="multipart/form-data" {{-- Add this for file uploads --}}
+              enctype="multipart/form-data"
               class="space-y-4">
 
             <!-- ضروري لإرسال الـ Id -->
@@ -71,17 +71,14 @@
             <!-- الاسم -->
             <div>
                 <label class="block text-sm font-medium text-gray-700">Name</label>
-                <input asp-for="Name"
-                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" />
+                <input asp-for="Name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" />
                 <span asp-validation-for="Name" class="text-red-600 text-xs mt-1"></span>
             </div>
 
             <!-- الكمية -->
             <div>
                 <label class="block text-sm font-medium text-gray-700">Quantity</label>
-                <input asp-for="Quantity"
-                       type="number"
-                       min="0"
+                <input asp-for="Quantity" type="number" min="0"
                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" />
                 <span asp-validation-for="Quantity" class="text-red-600 text-xs mt-1"></span>
             </div>
@@ -89,9 +86,7 @@
             <!-- السعر -->
             <div>
                 <label class="block text-sm font-medium text-gray-700">Price</label>
-                <input asp-for="Price"
-                       type="number"
-                       step="0.01"
+                <input asp-for="Price" type="number" step="0.01"
                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" />
                 <span asp-validation-for="Price" class="text-red-600 text-xs mt-1"></span>
             </div>
@@ -99,33 +94,38 @@
             <!-- الوصف -->
             <div>
                 <label class="block text-sm font-medium text-gray-700">Description</label>
-                <textarea asp-for="Description"
-                          rows="3"
+                <textarea asp-for="Description" rows="3"
                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2"></textarea>
                 <span asp-validation-for="Description" class="text-red-600 text-xs mt-1"></span>
             </div>
+
             <input type="hidden" asp-for="ImagePath" />
 
             @if (!string.IsNullOrEmpty(Model.ImagePath))
             {
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700">Current Image</label>
-                    <img src="@Model.ImagePath" alt="Current Equipment Image" class="mt-2 h-32 w-32 object-cover rounded-md border border-gray-200" />
+                    <img src="@Model.ImagePath" alt="Current Equipment Image"
+                         class="mt-2 h-32 w-32 object-cover rounded-md border border-gray-200" />
                 </div>
             }
-            {{-- Add file input for new image upload --}}
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Upload New Image (Optional)</label>
-                <input type="file" name="ImageFile" class="mt-1 block w-full text-gray-700" />
-            </div>
 
             <div>
+                <label class="block text-sm font-medium text-gray-700">
+                    Upload New Image <span class="text-gray-500 text-xs">(optional)</span>
+                </label>
+                <input type="file" name="ImageFile" accept="image/*"
+                    class="mt-1 block w-full text-gray-700" />
+            </div>
+
+            <!-- رابط -->
+            <div>
                 <label class="block text-sm font-medium text-gray-700">Link URL</label>
-                <textarea asp-for="Link"
-                          rows="3"
+                <textarea asp-for="Link" rows="3"
                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2"></textarea>
                 <span asp-validation-for="Link" class="text-red-600 text-xs mt-1"></span>
             </div>
+
             <!-- الحالة -->
             <div>
                 <label class="block text-sm font-medium text-gray-700">Status</label>
@@ -138,10 +138,9 @@
                 <span asp-validation-for="status" class="text-red-600 text-xs mt-1"></span>
             </div>
 
-            <!-- اختيار المختبر -->
+            <!-- المختبر -->
             @if (isLabIdPreSet)
             {
-                <!-- العرض فقط والـ Id مخفي -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Lab</label>
                     <p class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 bg-gray-50">
@@ -181,5 +180,3 @@
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
 }
-
-

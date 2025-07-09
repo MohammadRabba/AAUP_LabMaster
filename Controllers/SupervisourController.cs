@@ -215,9 +215,81 @@ namespace AAUP_LabMaster.Controllers
             // Return the Equipment model directly instead of converting to DTO
             return View(equipment);
         }
+
+
+        [HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> UpdateEquipment(Equipment equipment, IFormFile ImageFile)
+{
+    if (!ModelState.IsValid)
+    {
+        ViewBag.Labs = labManager.getAllLabs();
+        return View(equipment);
+    }
+
+    try
+    {
+        var existingEquipment = equipmentManager.GetEquipmentById(equipment.Id);
+        if (existingEquipment == null)
+        {
+            TempData["ErrorMessage"] = $"Equipment with ID {equipment.Id} not found.";
+            return RedirectToAction("ViewAllEquipments");
+        }
+
+        // ✅ Only replace image if a new one is provided
+        if (ImageFile != null && ImageFile.Length > 0)
+        {
+            // Delete old image if exists
+            if (!string.IsNullOrEmpty(existingEquipment.ImagePath))
+            {
+                var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, existingEquipment.ImagePath.TrimStart('/'));
+                if (System.IO.File.Exists(oldImagePath))
+                {
+                    System.IO.File.Delete(oldImagePath);
+                }
+            }
+
+            // Save new image
+            var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "img");
+            Directory.CreateDirectory(uploadsFolder); // Safe even if exists
+
+            var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(ImageFile.FileName);
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await ImageFile.CopyToAsync(fileStream);
+            }
+
+            existingEquipment.ImagePath = "/img/" + uniqueFileName;
+        }
+
+        // ✅ Always update the other fields
+        existingEquipment.Name = equipment.Name;
+        existingEquipment.Description = equipment.Description;
+        existingEquipment.Quantity = equipment.Quantity;
+        existingEquipment.Price = equipment.Price;
+        existingEquipment.status = equipment.status;
+        existingEquipment.LabId = equipment.LabId;
+        existingEquipment.Link = equipment.Link;
+
+        // Save changes
+        equipmentManager.UpdateEquipment(existingEquipment);
+
+        TempData["Message"] = "Equipment updated successfully!";
+        return RedirectToAction("ViewAllEquipments", new { id = existingEquipment.LabId });
+    }
+    catch (Exception ex)
+    {
+        TempData["ErrorMessage"] = $"Error updating equipment: {ex.Message}";
+        ViewBag.Labs = labManager.getAllLabs();
+        return View(equipment);
+    }
+}
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateEquipment(Equipment equipment, IFormFile ImageFile)
+        public async Task<IActionResult> UpdateEquipment12(Equipment equipment, IFormFile ImageFile)
         {
             if (!ModelState.IsValid)
             {

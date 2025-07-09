@@ -12,7 +12,7 @@ namespace AAUP_LabMaster.Controllers
 {
     [Authorize(Roles = "Admin")]
 
-    public class AdminController : 
+    public class AdminController :
     Controller
     {
         private readonly AdminManager adminManager;
@@ -27,11 +27,11 @@ namespace AAUP_LabMaster.Controllers
             this.labManager = labManager;
             this.superManager = superManager;
         }
-      
+
 
         public IActionResult DeleteUser(int id)
         {
-           
+
 
             adminManager.RemoveUser(id);
             TempData["Message"] = "User deleted successfully.";
@@ -42,8 +42,8 @@ namespace AAUP_LabMaster.Controllers
         {
             return View(new UserDTO());
         }
-        
-             public IActionResult UpdateUser()
+
+        public IActionResult UpdateUser()
         {
             return View(new UserDTO());
         }
@@ -69,6 +69,7 @@ namespace AAUP_LabMaster.Controllers
 
             return View(dto);
         }
+
 
         [HttpPost]
         public IActionResult UpdateUser(UserDTO user)
@@ -128,7 +129,7 @@ namespace AAUP_LabMaster.Controllers
             if (user == null)
                 return RedirectToAction("Login", "Account");
 
-            return View(user); 
+            return View(user);
         }
 
         public IActionResult BookingManagement()
@@ -165,16 +166,40 @@ namespace AAUP_LabMaster.Controllers
         }
 
         public IActionResult DeleteBooking(int id)
-{   
-   var deleted= bookingManager.RemoveBooking(id);
-            if (deleted == false) { return NotFound(); }
-    TempData["Message"] = "Booking deleted successfully.";
-    return RedirectToAction("BookingManagement");
-}
-
-        public IActionResult UserManagement()
         {
-          var users = adminManager.getAllUsers();
+            var deleted = bookingManager.RemoveBooking(id);
+            if (deleted == false) { return NotFound(); }
+            TempData["Message"] = "Booking deleted successfully.";
+            return RedirectToAction("BookingManagement");
+        }
+        
+        public IActionResult UserManagement(string searchTerm, string roleFilter)
+            {
+                var users = adminManager.getAllUsers();
+
+                if (!string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    searchTerm = searchTerm.ToLower();
+                    users = users.Where(u =>
+                        (!string.IsNullOrEmpty(u.FullName) && u.FullName.ToLower().Contains(searchTerm)) ||
+                        (!string.IsNullOrEmpty(u.Email) && u.Email.ToLower().Contains(searchTerm)) ||
+                        (!string.IsNullOrEmpty(u.Role) && u.Role.ToLower().Contains(searchTerm)) ||
+                        (!string.IsNullOrEmpty(u.PhoneNumber) && u.PhoneNumber.ToLower().Contains(searchTerm))
+                    ).ToList();
+                }
+
+               if (!string.IsNullOrEmpty(roleFilter))
+                {
+                    users = users.Where(u => u.Role == roleFilter).ToList();
+                }
+                
+                ViewBag.TotalUsers = users.Count;
+                return View(users);
+            }
+        
+        public IActionResult UserManagement11()
+        {
+            var users = adminManager.getAllUsers();
             return View(users);
         }
         public IActionResult LabSettings()
@@ -191,7 +216,7 @@ namespace AAUP_LabMaster.Controllers
         [HttpPost]
         public IActionResult AddLab(LabDTO labDto)
         {
-            PopulateSupervisorsDropdown(); 
+            PopulateSupervisorsDropdown();
 
             if (!ModelState.IsValid)
             {
@@ -210,25 +235,25 @@ namespace AAUP_LabMaster.Controllers
             {
                 Console.WriteLine($"Error adding lab: {ex.Message}");
                 TempData["ErrorMessage"] = $"Error adding lab: {ex.Message}";
-                return View("AddLab", labDto); 
+                return View("AddLab", labDto);
             }
         }
 
         [HttpGet]
         public IActionResult EditLab(int id)
         {
-            var lab = labManager.GetLabById(id); 
+            var lab = labManager.GetLabById(id);
             if (lab == null)
             {
                 return NotFound();
             }
 
-            return View(lab); 
+            return View(lab);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult EditLab(Lab lab, List<string> EquipmentNames) 
+        public IActionResult EditLab(Lab lab, List<string> EquipmentNames)
         {
 
             //if (EquipmentNames != null && EquipmentNames.Any(string.IsNullOrWhiteSpace))
@@ -239,12 +264,12 @@ namespace AAUP_LabMaster.Controllers
             if (!ModelState.IsValid)
             {
                 TempData["ErrorMessage"] = "Please correct the errors and try again.";
-                return View(lab); 
+                return View(lab);
             }
 
             try
             {
-              
+
                 var labDto = new LabDTO
                 {
                     Name = lab.Name,
@@ -271,16 +296,43 @@ namespace AAUP_LabMaster.Controllers
                 return View(lab);
             }
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult UpdateLabBasic(int id, string name, string description)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                ModelState.AddModelError("Name", "Lab name is required.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                var lab = new Lab { Id = id, Name = name, Description = description };
+                TempData["ErrorMessage"] = "Please correct the errors and try again.";
+                return View("EditLab", lab);
+            }
+
+            bool updated = labManager.UpdateLabNameAndDescription(id, name, description);
+
+            if (!updated)
+            {
+                TempData["ErrorMessage"] = "Lab not found or cannot be updated.";
+                return View("EditLab", new Lab { Id = id, Name = name, Description = description });
+            }
+
+            TempData["Message"] = "Lab updated successfully.";
+            return RedirectToAction("LabSettings");
+        }
 
 
-        private void PopulateSupervisorsDropdown(int? selectedId = null) 
+        private void PopulateSupervisorsDropdown(int? selectedId = null)
         {
             ViewBag.SupervisorsList = superManager.GetAllSupervisours()
                 .Select(u => new SelectListItem
                 {
                     Value = u.FullName,
                     Text = u.FullName,
-                    Selected = (selectedId.HasValue && u.Id == selectedId.Value) 
+                    Selected = (selectedId.HasValue && u.Id == selectedId.Value)
                 })
                 .ToList();
         }
@@ -290,18 +342,43 @@ namespace AAUP_LabMaster.Controllers
             labManager.RemoveLab(id);
 
             TempData["Message"] = "Lab deleted successfuly.";
-           return RedirectToAction("LabSettings");
+            return RedirectToAction("LabSettings");
         }
 
+     public IActionResult Reports()
+    {
+        // Get all bookings from the system
+        var bookings = bookingManager.getAllBooking();
 
-        public IActionResult Reports()
-        {  
-            var totalBookings = bookingManager.getAllBooking().Count();
-            var mostUsed = bookingManager.GetBookings();
+        // Total number of bookings
+        var totalBookings = bookings.Count();
 
-                ViewBag.TotalBookings = totalBookings;
-                ViewBag.MostUsedLab = mostUsed;
-            return View();
-        }
+        // Get the name of the most used lab (based on booking count)
+        var mostUsed = bookingManager.GetBookings();
+
+        // Get all labs with related Equipment and Supervisour info
+        var labs = labManager.GetAllLabsWithDetails(); // includes Equipment and Supervisour
+
+        // Count bookings per lab
+        var labBookings = labs.Select(lab => new
+        {
+            Lab = lab,
+            BookingCount = bookings.Count(b => b.Equipment != null && b.Equipment.LabId == lab.Id)
+        }).ToList();
+
+        // Pass to ViewBag
+        ViewBag.TotalBookings = totalBookings;
+        ViewBag.MostUsedLab = mostUsed;
+        ViewBag.LabBookings = labBookings;
+
+        // No need to pass a model
+        return View();
+    }
+
+
+
+        
+
+        
     }
 }

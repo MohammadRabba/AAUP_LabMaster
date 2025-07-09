@@ -40,6 +40,15 @@ namespace AAUP_LabMaster.EntityManager
             context.Labs.Add(newlab);
             context.SaveChanges();
         }
+        public List<Lab> GetAllLabsWithDetails()
+            {
+                return context.Labs
+                    .Include(l => l.Supervisour)
+                    .Include(l => l.Equipment)
+                    .Where(l => l.Name != "Empty Lab")
+                    .ToList();
+            }
+
         public Lab GetLabById(int id)
         {
             var lab = context.Labs
@@ -57,11 +66,28 @@ namespace AAUP_LabMaster.EntityManager
               .Include(l => l.Supervisour).Where(l => l.Name != "Empty Lab")
               .ToList();
         }
+
+
+         public bool UpdateLabNameAndDescription(int labId, string name, string description)
+        {
+            var lab = context.Labs.FirstOrDefault(l => l.Id == labId && l.Name != "Empty Lab");
+            if (lab == null)
+            {
+                return false;
+            }
+
+            lab.Name = name;
+            lab.Description = description ?? "";
+
+            context.SaveChanges();
+            return true;
+        }
+
         public bool UpdateLab(LabDTO labDto)
         {
             var existingLab = context.Labs
-                                    .Include(l => l.Equipment) 
-                                    .FirstOrDefault(l => l.Name == labDto.Name&&l.Name!="Empty Lab");
+                                    .Include(l => l.Equipment)
+                                    .FirstOrDefault(l => l.Name == labDto.Name && l.Name != "Empty Lab");
 
             if (existingLab == null)
             {
@@ -78,7 +104,7 @@ namespace AAUP_LabMaster.EntityManager
                 existingLab.SupervisorId = newSupervisor.Id;
                 existingLab.Supervisour = newSupervisor;
             }
-           
+
 
             context.SaveChanges();
             return true;
