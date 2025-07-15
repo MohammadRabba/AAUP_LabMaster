@@ -1,5 +1,4 @@
 @model AAUP_LabMaster.Models.User
- 
 @{
     Layout = "_AdminLayout";
 }
@@ -15,14 +14,48 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#4F46E5',
-                        secondary: '#10B981',
-                        dark: '#1F2937',
-                        light: '#F9FAFB'
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#4F46E5',
+                            600: '#4338CA',
+                        },
+                        secondary: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10B981',
+                            600: '#059669',
+                        },
+                        dark: {
+                            50: '#f9fafb',
+                            100: '#f3f4f6',
+                            700: '#1F2937',
+                            800: '#111827',
+                        },
+                        accent: {
+                            purple: '#8B5CF6',
+                            blue: '#3B82F6',
+                            amber: '#F59E0B'
+                        }
                     },
                     boxShadow: {
-                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.08)',
-                        'soft-hover': '0 8px 25px -5px rgba(0, 0, 0, 0.1)'
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'soft-hover': '0 8px 25px -5px rgba(0, 0, 0, 0.08)',
+                        'card': '0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03)'
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-in-out',
+                        'float': 'float 3s ease-in-out infinite'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-5px)' }
+                        }
                     }
                 }
             }
@@ -32,9 +65,11 @@
         .action-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             transform-origin: center;
+            backface-visibility: hidden;
+            will-change: transform;
         }
         .action-card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-4px) scale(1.01);
         }
         .icon-wrapper {
             transition: all 0.3s ease;
@@ -42,49 +77,55 @@
         .action-card:hover .icon-wrapper {
             transform: scale(1.1);
         }
+        .stat-card {
+            transition: all 0.2s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #4F46E5 0%, #8B5CF6 100%);
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Header -->
-        <div class="mb-10">
-            <h1 class="text-3xl font-bold text-dark">Admin Dashboard</h1>
-            <p class="text-gray-600 mt-2">Welcome back, manage your lab resources efficiently</p>
+        <!-- Welcome Header -->
+        <div class="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+            <div>
+                <h1 class="text-3xl font-bold text-dark-800">Welcome back, <span class="text-primary-500">@Model.FullName</span></h1>
+                <p class="text-gray-500 mt-2">Here's what's happening with your lab today</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 text-sm font-medium">
+                    <span class="w-2 h-2 mr-2 rounded-full bg-green-500"></span>
+                    Active
+                </span>
+                <span class="text-sm text-gray-500">Last login: @DateTime.Now.ToString("MMM dd, h:mm tt")</span>
+            </div>
         </div>
+
+        <!-- Stats Overview -->
         
         <!-- Quick Actions Section -->
         <div class="mb-12">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold text-dark-800">Quick Actions</h2>
+                 
+            </div>
             
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Booking Management -->
-                @* <a href="/Admin/BookingManagement" class="group">
-                    <div class="action-card bg-white p-8 rounded-2xl shadow-soft hover:shadow-soft-hover border border-gray-100 hover:border-primary/50 h-full flex flex-col">
-                        <div class="flex-grow">
-                            <div class="icon-wrapper bg-primary/10 p-4 rounded-xl text-primary group-hover:bg-primary/20 inline-flex mb-6">
-                                <i class="fas fa-calendar-plus text-2xl"></i>
-                            </div>
-                            <h3 class="text-xl font-semibold text-dark group-hover:text-primary transition mb-3">Booking Management</h3>
-                            <p class="text-gray-600">Manage all lab equipment bookings and reservations</p>
-                        </div>
-                        <div class="mt-6 text-sm text-primary font-medium flex items-center">
-                            <span>Go to Bookings</span>
-                            <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
-                        </div>
-                    </div>
-                </a> *@
-
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- User Management -->
                 <a href="/Admin/UserManagement" class="group">
-                    <div class="action-card bg-white p-8 rounded-2xl shadow-soft hover:shadow-soft-hover border border-gray-100 hover:border-secondary/50 h-full flex flex-col">
+                    <div class="action-card bg-white p-6 rounded-xl shadow-soft hover:shadow-soft-hover border border-gray-100 hover:border-secondary-500/30 h-full flex flex-col animate-fade-in">
                         <div class="flex-grow">
-                            <div class="icon-wrapper bg-secondary/10 p-4 rounded-xl text-secondary group-hover:bg-secondary/20 inline-flex mb-6">
+                            <div class="icon-wrapper bg-secondary-50 p-4 rounded-xl text-secondary-500 group-hover:bg-secondary-100 inline-flex mb-5">
                                 <i class="fas fa-user-cog text-2xl"></i>
                             </div>
-                            <h3 class="text-xl font-semibold text-dark group-hover:text-secondary transition mb-3">User Management</h3>
-                            <p class="text-gray-600">Control user accounts, roles and permissions</p>
+                            <h3 class="text-lg font-semibold text-dark-700 group-hover:text-secondary-600 transition mb-2">User Management</h3>
+                            <p class="text-gray-500 text-sm">Control user accounts, roles and permissions</p>
                         </div>
-                        <div class="mt-6 text-sm text-secondary font-medium flex items-center">
+                        <div class="mt-6 text-sm text-secondary-500 font-medium flex items-center group-hover:text-secondary-600">
                             <span>Manage Users</span>
                             <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
                         </div>
@@ -93,15 +134,15 @@
 
                 <!-- Lab Settings -->
                 <a href="/Admin/LabSettings" class="group">
-                    <div class="action-card bg-white p-8 rounded-2xl shadow-soft hover:shadow-soft-hover border border-gray-100 hover:border-purple-500/50 h-full flex flex-col">
+                    <div class="action-card bg-white p-6 rounded-xl shadow-soft hover:shadow-soft-hover border border-gray-100 hover:border-accent-purple/30 h-full flex flex-col animate-fade-in" style="animation-delay: 0.1s">
                         <div class="flex-grow">
-                            <div class="icon-wrapper bg-purple-500/10 p-4 rounded-xl text-purple-500 group-hover:bg-purple-500/20 inline-flex mb-6">
+                            <div class="icon-wrapper bg-purple-50 p-4 rounded-xl text-accent-purple group-hover:bg-purple-100 inline-flex mb-5">
                                 <i class="fas fa-flask text-2xl"></i>
                             </div>
-                            <h3 class="text-xl font-semibold text-dark group-hover:text-purple-500 transition mb-3">Lab Settings</h3>
-                            <p class="text-gray-600">Configure labs, equipment and maintenance</p>
+                            <h3 class="text-lg font-semibold text-dark-700 group-hover:text-accent-purple transition mb-2">Lab Settings</h3>
+                            <p class="text-gray-500 text-sm">Configure labs, equipment and maintenance</p>
                         </div>
-                        <div class="mt-6 text-sm text-purple-500 font-medium flex items-center">
+                        <div class="mt-6 text-sm text-accent-purple font-medium flex items-center group-hover:text-purple-600">
                             <span>Lab Configuration</span>
                             <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
                         </div>
@@ -110,16 +151,33 @@
 
                 <!-- Reports -->
                 <a href="/Admin/Reports" class="group">
-                    <div class="action-card bg-white p-8 rounded-2xl shadow-soft hover:shadow-soft-hover border border-gray-100 hover:border-blue-500/50 h-full flex flex-col">
+                    <div class="action-card bg-white p-6 rounded-xl shadow-soft hover:shadow-soft-hover border border-gray-100 hover:border-accent-blue/30 h-full flex flex-col animate-fade-in" style="animation-delay: 0.2s">
                         <div class="flex-grow">
-                            <div class="icon-wrapper bg-blue-500/10 p-4 rounded-xl text-blue-500 group-hover:bg-blue-500/20 inline-flex mb-6">
+                            <div class="icon-wrapper bg-blue-50 p-4 rounded-xl text-accent-blue group-hover:bg-blue-100 inline-flex mb-5">
                                 <i class="fas fa-chart-bar text-2xl"></i>
                             </div>
-                            <h3 class="text-xl font-semibold text-dark group-hover:text-blue-500 transition mb-3">Reports & Analytics</h3>
-                            <p class="text-gray-600">View lab usage statistics and generate reports</p>
+                            <h3 class="text-lg font-semibold text-dark-700 group-hover:text-accent-blue transition mb-2">Reports & Analytics</h3>
+                            <p class="text-gray-500 text-sm">View lab usage statistics and generate reports</p>
                         </div>
-                        <div class="mt-6 text-sm text-blue-500 font-medium flex items-center">
+                        <div class="mt-6 text-sm text-accent-blue font-medium flex items-center group-hover:text-blue-600">
                             <span>View Reports</span>
+                            <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Quick Add -->
+                <a href="/Admin/AddUser" class="group">
+                    <div class="action-card bg-white p-6 rounded-xl shadow-soft hover:shadow-soft-hover border border-gray-100 hover:border-accent-amber/30 h-full flex flex-col animate-fade-in" style="animation-delay: 0.3s">
+                        <div class="flex-grow">
+                            <div class="icon-wrapper bg-amber-50 p-4 rounded-xl text-accent-amber group-hover:bg-amber-100 inline-flex mb-5">
+                                <i class="fas fa-plus text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-dark-700 group-hover:text-accent-amber transition mb-2">Quick Add</h3>
+                            <p class="text-gray-500 text-sm">Add new equipment, users or reservations</p>
+                        </div>
+                        <div class="mt-6 text-sm text-accent-amber font-medium flex items-center group-hover:text-amber-600">
+                            <span>Create New</span>
                             <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
                         </div>
                     </div>
@@ -127,9 +185,8 @@
             </div>
         </div>
 
+         
         
-      
-        </div>
     </div>
 </body>
 </html>
