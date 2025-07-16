@@ -94,32 +94,32 @@ namespace AAUP_LabMaster.EntityManager
         public void RemoveUser(int id)
         {
             var user = context.Users.FirstOrDefault(u => u.Id == id);
-            if (user != null)
+            if (user == null) return;
+
+            if (user is Admin)
             {
-                if (user is Admin)
-                {
-                    context.Admins.Remove((Admin)user);
-                }
-                else if (user is Client)
-                {
-                    context.Clients.Remove((Client)user);
-                }
-                else if (user is Supervisour)
-                {
-                    var Labs = context.Labs.FirstOrDefault(l => l.Supervisour.Email == user.Email);
-                    foreach (var lab in context.Labs)
-                    {
+                context.Admins.Remove((Admin)user);
+            }
+            else if (user is Client)
+            {
+                context.Clients.Remove((Client)user);
+            }
+            else if (user is Supervisour)
+            {
+                // Fix: Only get labs for this supervisor
+                var supervisorLabs = context.Labs.Where(l => l.Supervisour.Email == user.Email).ToList();
 
-                        labManager.RemoveLab(lab.Id);
-                    }
-
+                foreach (var lab in supervisorLabs)
+                {
+                    labManager.RemoveLab(lab.Id);
                 }
+
                 context.Supervisours.Remove((Supervisour)user);
             }
+
             context.Users.Remove(user);
             context.SaveChanges();
-        
-}
+        }
 
         public async Task UpdateUserAsync(UserDTO user)
         {
