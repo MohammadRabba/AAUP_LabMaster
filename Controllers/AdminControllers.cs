@@ -92,18 +92,7 @@ namespace AAUP_LabMaster.Controllers
             }
         }
 
-        [HttpPut]
-        public IActionResult UpdateUser123(UserDTO user)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(user);
-            }
-
-            adminManager.UpdateUser(user);
-            TempData["Message"] = "User Updated successfully.";
-            return RedirectToAction("UserManagement");
-        }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult AddUser(UserDTO user)
