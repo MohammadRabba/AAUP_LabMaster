@@ -32,7 +32,37 @@ namespace AAUP_LabMaster.Controllers
 
             return View(user);
         }
+        [HttpGet]
+        public IActionResult ViewAllEquipmentsUser(string searchString, bool isPartial = false)
+        {
+            Console.WriteLine($"Getting equipment with search: {searchString}");
 
+            var allEquipments = equipmentManager.GetAllEquipments();
+            Console.WriteLine($"Total equipment count: {allEquipments.Count()}");
+
+            IEnumerable<Equipment> equipments;
+
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                equipments = allEquipments
+                    .Where(e => e.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                                e.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+                ViewData["CurrentFilter"] = searchString;
+                Console.WriteLine($"Filtered equipment count: {equipments.Count()}");
+            }
+            else
+            {
+                equipments = allEquipments;
+            }
+
+            if (isPartial || Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_EquipmentTable", equipments.ToList());
+            }
+
+            return View(equipments.ToList());
+        }
         [Authorize] // Ensure only authenticated users can access
         [HttpGet]
         public IActionResult ViewAllEquipments(string searchString, bool isPartial = false) // isPartial default to false
@@ -66,9 +96,7 @@ namespace AAUP_LabMaster.Controllers
                 return PartialView("_EquipmentTable", equipments.ToList()); // Return ONLY the table HTML
             }
 
-            // This path is for the initial full page load (e.g., direct navigation to /User/ViewAllEquipments)
-            // You would typically still pass the data to the main view, but the main view's JS
-            // will handle rendering the table initially.
+         
             return View(equipments.ToList());
         
 }

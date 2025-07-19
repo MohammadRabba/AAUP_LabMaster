@@ -1,0 +1,86 @@
+﻿@using System.Security.Claims
+@model List<AAUP_LabMaster.Models.Equipment>
+@{
+    ViewData["Title"] = "Available Equipment";
+    Layout = "_UserLayout";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>@ViewData["Title"]</title>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="max-w-6xl mx-auto p-6">
+        <h2 class="text-2xl font-bold mb-4">Available Equipment</h2>
+
+        <div class="mb-4">
+            <div class="relative">
+                <input type="text" id="searchInput" placeholder="Search equipment..."
+                       class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       oninput="performSearch()">
+                <button onclick="clearSearch()"
+                        class="absolute right-2 top-2 text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div id="equipmentResults">
+            <!-- Loading spinner while waiting for data -->
+            <div id="loadingSpinner" class="flex justify-center items-center py-8">
+                <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to perform the search and update the table
+        function performSearch() {
+            const query = document.getElementById('searchInput').value;
+            const resultsDiv = document.getElementById('equipmentResults');
+            const spinner = document.getElementById('loadingSpinner');
+
+            // Show loading spinner
+            spinner.classList.remove('hidden');
+
+            fetch(`/User/ViewAllEquipmentsUser?searchString=${encodeURIComponent(query)}&isPartial=true`, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(html => {
+                resultsDiv.innerHTML = html;
+                spinner.classList.add('hidden');
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                resultsDiv.innerHTML = '<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert"><strong class="font-bold">Error!</strong><span class="block sm:inline"> Failed to load equipment.</span></div>';
+                spinner.classList.add('hidden');
+            });
+        }
+
+        // Function to clear the search input and re-run search
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            performSearch();
+        }
+
+        // Initial load of the table when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded - performing initial search');
+            performSearch();
+        });
+    </script>
+</body>
+</html>

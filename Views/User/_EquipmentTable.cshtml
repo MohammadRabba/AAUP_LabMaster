@@ -9,10 +9,8 @@
                 <th>Quantity</th>
                 <th>Price</th>
                 <th>Link</th>
-
                 <th>Status</th>
                 <th>Action</th>
-
             </tr>
         </thead>
         <tbody>
@@ -25,20 +23,27 @@
                         <td>@equipment.Description</td>
                         <td>@equipment.Quantity</td>
                         <td>@equipment.Price.ToString("C")</td>
-                        <td>@equipment.Link</td>
-
+                        <td>
+                            @if (!string.IsNullOrEmpty(equipment.Link))
+                            {
+                                <a href="@equipment.Link" target="_blank" class="text-blue-600 hover:underline">Link</a>
+                            }
+                            else
+                            {
+                                <span>N/A</span>
+                            }
+                        </td>
                         <td>
                             <span class="status-badge @equipment.status.ToString().ToLower()">
                                 @equipment.status.ToString()
                             </span>
                         </td>
-                        @if (User.IsInRole("Supervisour"))
+                        @if (User.IsInRole("Supervisor"))
                         {
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <a href="@Url.Action("UpdateEquipment", "Supervisour", new { id = equipment.Id })"
+                                <a href="@Url.Action("UpdateEquipment", "Supervisor", new { id = equipment.Id })"
                                    class="text-blue-600 hover:text-blue-900 mr-3">Edit</a>
-
-                                <form asp-action="DeleteEquipment" asp-controller="Supervisour" method="post"
+                                <form asp-action="DeleteEquipment" asp-controller="Supervisor" method="post"
                                       class="inline" onsubmit="return confirm('Are you sure you want to delete this equipment?');">
                                     <input type="hidden" name="id" value="@equipment.Id" />
                                     @Html.AntiForgeryToken()
@@ -46,13 +51,17 @@
                                 </form>
                             </td>
                         }
+                        else
+                        {
+                            <td></td>
+                        }
                     </tr>
                 }
             }
             else
             {
                 <tr>
-                    <td colspan="5" class="no-results">No equipment found</td>
+                    <td colspan="7" class="no-results">No equipment found</td>
                 </tr>
             }
         </tbody>
