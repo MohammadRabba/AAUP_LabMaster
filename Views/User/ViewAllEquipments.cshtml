@@ -58,7 +58,7 @@
             const query = document.getElementById('searchInput').value;
             // The URL should correctly point to your controller action
             // Assuming the controller action is named ViewAllEquipments in the User controller
-            fetch(`/User/ViewAllEquipments?searchString=${encodeURIComponent(query)}&isPartial=true`, { // Pass isPartial=true
+            fetch(`/User/ViewAllEquipmentsUser?searchString=${encodeURIComponent(query)}&isPartial=true`, { // Pass isPartial=true
                 headers: {
                     "X-Requested-With": "XMLHttpRequest" // Good practice for AJAX requests
                 }

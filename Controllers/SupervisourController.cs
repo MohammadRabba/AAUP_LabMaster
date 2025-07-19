@@ -534,7 +534,7 @@ public async Task<IActionResult> UpdateEquipment(Equipment equipment, IFormFile 
         public async Task<IActionResult> AddNewEquipment(EquipmentDTO equipmentDto, IFormFile ImageFile)
         {
             // Initialize with default image path
-            var imagePath = "/img/courses-1.jpg"; // Fixed variable name casing (ImagePath -> imagePath)
+            var imagePath = "/img/courses-1.jpg";
 
             if (!ModelState.IsValid)
             {
@@ -567,7 +567,7 @@ public async Task<IActionResult> UpdateEquipment(Equipment equipment, IFormFile 
 
                     // Save new image
                     var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "img");
-                    Directory.CreateDirectory(uploadsFolder); // Safe even if exists
+                    Directory.CreateDirectory(uploadsFolder);
 
                     var uniqueFileName = Guid.NewGuid().ToString() + fileExtension;
                     var filePath = Path.Combine(uploadsFolder, uniqueFileName);
@@ -589,7 +589,7 @@ public async Task<IActionResult> UpdateEquipment(Equipment equipment, IFormFile 
                     status = equipmentDto.status,
                     LabId = equipmentDto.LabId,
                     ImagePath = imagePath,
-                    Link = equipmentDto.linkUrl // Fixed property name (linkUrl -> Link)
+                    Link = equipmentDto.linkUrl
                 };
 
                 var addedEquipment = equipmentManager.AddEquipment(newEquipment);
@@ -605,14 +605,11 @@ public async Task<IActionResult> UpdateEquipment(Equipment equipment, IFormFile 
             catch (Exception ex)
             {
                 // Log the error
-
-
                 TempData["ErrorMessage"] = "An error occurred while adding the equipment. Please try again.";
                 ViewBag.Labs = labManager.getAllLabs();
                 return View(equipmentDto);
             }
         }
-
         public IActionResult DeleteEquipment(int id) // Action name is DeleteEquipment, no need for ActionName attribute if matching route
         {
             int? labId = null;
