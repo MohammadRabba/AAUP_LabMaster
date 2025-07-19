@@ -202,14 +202,14 @@ namespace AAUP_LabMaster.Controllers
             if (!id.HasValue || id <= 0)
             {
                 TempData["ErrorMessage"] = "Invalid equipment ID.";
-                return RedirectToAction("GetEquipmentByLabId");
+                return RedirectToAction("/User/ViewAllEquipments");
             }
 
             var equipment = equipmentManager.GetEquipmentById(id.Value);
             if (equipment == null)
             {
                 TempData["ErrorMessage"] = $"Equipment with ID {id.Value} not found.";
-                return RedirectToAction("ViewAllEquipments");
+                return RedirectToAction("/User/ViewAllEquipments");
             }
 
             // Return the Equipment model directly instead of converting to DTO
@@ -531,8 +531,11 @@ public async Task<IActionResult> UpdateEquipment(Equipment equipment, IFormFile 
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddNewEquipment(EquipmentDTO equipmentDto)
+        public async Task<IActionResult> AddNewEquipment(EquipmentDTO equipmentDto, IFormFile ImageFile)
         {
+            // Initialize with default image path
+            var imagePath = "/img/courses-1.jpg"; // Fixed variable name casing (ImagePath -> imagePath)
+
             if (!ModelState.IsValid)
             {
                 ViewBag.Labs = labManager.getAllLabs();
@@ -541,9 +544,41 @@ public async Task<IActionResult> UpdateEquipment(Equipment equipment, IFormFile 
 
             try
             {
-                string imagePath = equipmentDto.ImageFile != null
-                    ? "/img/" + equipmentDto.ImageFile.FileName
-                    : "/img/courses-6.jpg";
+                if (ImageFile != null && ImageFile.Length > 0)
+                {
+                    // Validate file type
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                    var fileExtension = Path.GetExtension(ImageFile.FileName).ToLowerInvariant();
+
+                    if (!allowedExtensions.Contains(fileExtension))
+                    {
+                        ModelState.AddModelError("ImageFile", "Only image files (jpg, jpeg, png, gif) are allowed.");
+                        ViewBag.Labs = labManager.getAllLabs();
+                        return View(equipmentDto);
+                    }
+
+                    // Validate file size (e.g., 5MB max)
+                    if (ImageFile.Length > 5 * 1024 * 1024)
+                    {
+                        ModelState.AddModelError("ImageFile", "File size cannot exceed 5MB.");
+                        ViewBag.Labs = labManager.getAllLabs();
+                        return View(equipmentDto);
+                    }
+
+                    // Save new image
+                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "img");
+                    Directory.CreateDirectory(uploadsFolder); // Safe even if exists
+
+                    var uniqueFileName = Guid.NewGuid().ToString() + fileExtension;
+                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await ImageFile.CopyToAsync(fileStream);
+                    }
+
+                    imagePath = "/img/" + uniqueFileName;
+                }
 
                 var newEquipment = new Equipment
                 {
@@ -554,7 +589,7 @@ public async Task<IActionResult> UpdateEquipment(Equipment equipment, IFormFile 
                     status = equipmentDto.status,
                     LabId = equipmentDto.LabId,
                     ImagePath = imagePath,
-                    Link = equipmentDto.linkUrl
+                    Link = equipmentDto.linkUrl // Fixed property name (linkUrl -> Link)
                 };
 
                 var addedEquipment = equipmentManager.AddEquipment(newEquipment);
@@ -564,12 +599,15 @@ public async Task<IActionResult> UpdateEquipment(Equipment equipment, IFormFile 
                     throw new Exception("Failed to save equipment to database");
                 }
 
-                TempData["Message"] = "Equipment added successfully!";
+                TempData["SuccessMessage"] = "Equipment added successfully!";
                 return RedirectToAction("GetEquipmentByLabId", new { id = addedEquipment.LabId });
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error adding equipment: {ex.Message}";
+                // Log the error
+
+
+                TempData["ErrorMessage"] = "An error occurred while adding the equipment. Please try again.";
                 ViewBag.Labs = labManager.getAllLabs();
                 return View(equipmentDto);
             }
