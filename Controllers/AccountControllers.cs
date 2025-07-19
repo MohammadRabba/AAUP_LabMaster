@@ -161,6 +161,7 @@ namespace AAUP_LabMaster.Controllers
             if (!string.IsNullOrEmpty(existingUser.Role))
             {
                 claims.Add(new Claim(ClaimTypes.Role, existingUser.Role));
+
             }
             else
             {

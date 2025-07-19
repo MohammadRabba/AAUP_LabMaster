@@ -14,6 +14,7 @@
 </head>
 <body class="bg-gray-50 min-h-screen px-4 py-8">
 
+<<<<<<< HEAD
 <div class="max-w-7xl mx-auto">
     <!-- Header Section -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
@@ -24,6 +25,31 @@
         <a asp-action="AddUser" asp-controller="Admin"
            class="mt-4 md:mt-0 inline-flex items-center px-5 py-3 bg-gradient-to-r from-green-600 to-green-500 text-white font-medium rounded-lg shadow-sm hover:from-green-700 hover:to-green-600 transition-all">
             <i class="fas fa-user-plus mr-2"></i> Add New User
+=======
+<h2 class="text-2xl font-bold mb-4">User List</h2>
+  <table class="table-auto w-full text-left border-collapse">
+    <thead>
+      <tr class="bg-gray-200">
+        <th class="px-4 py-2">FullName</th>
+        <th class="px-4 py-2">Email</th>
+        <th class="px-4 py-2">Role</th>
+        <th class="px-4 py-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+    @foreach(var user in Model)
+    {
+      <tr class="border-b">
+        <td class="px-4 py-2">@user.FullName</td>
+        <td class="px-4 py-2">@user.Email</td>
+        <td class="px-4 py-2">@user.Role</td>
+
+        <td class="px-4 py-2">
+          <!-- Edit Button -->
+          <a href="@Url.Action("UpdateUser", "Admin", new { id = user.Id })" 
+          class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+          Edit
+>>>>>>> 0dd51703fdadd598ecc4857396704b9ada3aeaf5
         </a>
     </div>
 

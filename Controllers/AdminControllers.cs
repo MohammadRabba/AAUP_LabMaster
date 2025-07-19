@@ -207,12 +207,14 @@ namespace AAUP_LabMaster.Controllers
             var users = labManager.getAllLabs();
             return View(users);
         }
+
         [HttpGet]
         public IActionResult AddLab()
         {
             PopulateSupervisorsDropdown();
             return View(new LabDTO());
         }
+
         [HttpPost]
         public IActionResult AddLab(LabDTO labDto)
         {
