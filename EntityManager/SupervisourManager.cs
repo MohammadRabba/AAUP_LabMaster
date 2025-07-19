@@ -42,9 +42,10 @@ namespace AAUP_LabMaster.EntityManager
                     _ => "updated"
                 };
 
-                var notification = new Notification
+               var notification = new Notification
                 {
-                    UserId = booking.ClientId,Subject="Booking Status Update",
+                    UserId = booking.ClientId,
+                    Subject = "Booking Status Update",
                     Body = $"Your booking for equipment '{booking.Equipment?.Name}' in lab '{booking.Equipment?.Lab?.Name}' on {booking.Date:MMM dd, yyyy} at {booking.Date:hh:mm tt} has been {statusMessage}.",
                     DateCreated = DateTime.Now
                 };

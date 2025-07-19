@@ -189,7 +189,62 @@ namespace AAUP_LabMaster.EntityManager
             context.SaveChanges();
             Console.WriteLine("Booking  created successfully.");
         }
+
         public void MakeBooking(string equipmentName, string note, DateTime time)
+{
+    var userEmailString = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Email);
+    var userNameString = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Name);
+
+    var equipment = context.Equipments
+        .Include(e => e.Lab)
+        .FirstOrDefault(e => e.Name == equipmentName);
+
+    if (equipment == null)
+    {
+        Console.WriteLine($"Equipment '{equipmentName}' not found.");
+        return;
+    }
+
+    if (equipment.status == Equipment.Availability.Available)
+    {
+        var clientId = context.Users.FirstOrDefault(u => u.Email == userEmailString)?.Id ?? 0;
+
+        var booking = new Booking
+        {
+            ClientId = clientId,
+            EquipmentId = equipment.Id,
+            Date = time,
+            Equipment = equipment,
+            Notes = note,
+            Price = equipment.Price
+        };
+
+        context.Bookings.Add(booking);
+        context.SaveChanges();
+        Console.WriteLine("Booking created successfully.");
+
+        // 💬 Create notification for supervisor
+        var supervisorId = equipment.Lab.SupervisorId;
+        var supervisor = context.Users.FirstOrDefault(u => u.Id == supervisorId);
+
+        if (supervisor != null)
+        {
+            var notification = new Notification
+            {
+                UserId = supervisorId,
+                Subject = "New Booking Request",
+                Body = $"A new booking request was made for equipment '{equipment.Name}' in lab '{equipment.Lab.Name}' on {time:MMM dd, yyyy} at {time:hh:mm tt}.",
+                DateCreated = DateTime.Now
+            };
+
+            context.Notifications.Add(notification);
+            context.SaveChanges();
+            Console.WriteLine("Notification sent to supervisor.");
+        }
+    }
+}
+
+        public void MakeBooking123(string equipmentName, string note, DateTime time)
         {
             var userEmailString = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Email);
             var userNameString = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Name);
@@ -201,28 +256,28 @@ namespace AAUP_LabMaster.EntityManager
             }
             else if (equipment.status == Equipment.Availability.Available)
             {
-                
-                    var book = new Booking
-                    {
-                        ClientId = context.Users.FirstOrDefault(u => u.Email == userEmailString)?.Id ?? 0,
-                        EquipmentId = equipment.Id,
-                        Date = time,
-                        Equipment = equipment,
-                        Notes = note,
-                        Price = equipment.Price
-                    };
-                    context.Bookings.Add(book);
-                    context.SaveChanges();
-                    Console.WriteLine("Booking  created successfully.");
 
-                    // var notificationManager = new NotificationManager();
-                    // notificationManager.SendEmail(
-                    //     userEmailString,
-                    //     "Booking Confirmation",
-                    //     $"Dear {userNameString}, your booking has been created."
-                    // );
-                }
-             
+                var book = new Booking
+                {
+                    ClientId = context.Users.FirstOrDefault(u => u.Email == userEmailString)?.Id ?? 0,
+                    EquipmentId = equipment.Id,
+                    Date = time,
+                    Equipment = equipment,
+                    Notes = note,
+                    Price = equipment.Price
+                };
+                context.Bookings.Add(book);
+                context.SaveChanges();
+                Console.WriteLine("Booking  created successfully.");
+
+                // var notificationManager = new NotificationManager();
+                // notificationManager.SendEmail(
+                //     userEmailString,
+                //     "Booking Confirmation",
+                //     $"Dear {userNameString}, your booking has been created."
+                // );
+            }
+
         }
     }
 }
