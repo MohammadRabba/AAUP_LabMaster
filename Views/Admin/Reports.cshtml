@@ -1,6 +1,4 @@
-@{
-    
-    Layout = "_AdminLayout";
+@{Layout = "_AdminLayout";
     ViewData["Title"] = "Reports & Statistics";
     var labBookings = ViewBag.LabBookings as IEnumerable<dynamic>;
     int totalBookings = ViewBag.TotalBookings != null ? (int)ViewBag.TotalBookings : 0;

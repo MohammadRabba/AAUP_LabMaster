@@ -167,7 +167,7 @@ public async Task<IActionResult> UpdateEquipment(Equipment equipment, IFormFile 
         equipmentManager.UpdateEquipment(existingEquipment);
 
         TempData["Message"] = "Equipment updated successfully!";
-        return RedirectToAction("ViewAllEquipments", new { id = existingEquipment.LabId });
+       return View(equipment);
     }
     catch (Exception ex)
     {

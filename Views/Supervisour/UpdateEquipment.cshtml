@@ -1,9 +1,8 @@
 ﻿@model AAUP_LabMaster.Models.Equipment
 
-@{
-    ViewData["Title"] = "Update Equipment";
+@{ 
     Layout = "_UserLayout";
-
+    ViewData["Title"] = "Update Equipment";
     // قائمة المختبرات القادمة من الـ Controller
     var labs = ViewBag.Labs as List<AAUP_LabMaster.Models.Lab>
                ?? new List<AAUP_LabMaster.Models.Lab>();
