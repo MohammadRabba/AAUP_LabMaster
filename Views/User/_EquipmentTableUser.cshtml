@@ -1,0 +1,106 @@
+﻿@model List<AAUP_LabMaster.Models.Equipment>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+         
+       
+           
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipment</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach (var eq in Model)
+                            {
+                                <tr class="hover:bg-gray-50 transition">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            @if (!string.IsNullOrEmpty(eq.ImagePath))
+                                            {
+                                                <div class="flex-shrink-0 h-10 w-10">
+                                                    <img class="h-10 w-10 rounded-md object-cover" src="@eq.ImagePath" alt="@eq.Name">
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-md flex items-center justify-center text-gray-500">
+                                                    <i class="fas fa-tools"></i>
+                                                </div>
+                                            }
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">@eq.Name</div>
+                                                @if (!string.IsNullOrEmpty(eq.Link))
+                                                {
+                                                    <div class="text-sm text-gray-500">
+                                                        <a href="@eq.Link" target="_blank" class="text-blue-500 hover:underline">Product Link</a>
+                                                    </div>
+                                                }
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                      @(eq.Quantity > 5 ? "bg-green-100 text-green-800" :
+                                                                                              eq.Quantity > 0 ? "bg-yellow-100 text-yellow-800" : "bg-red-100 text-red-800")">
+                                    @eq.Quantity @(eq.Quantity == 1 ? "unit" : "units")
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                @eq.Price.ToString("C")
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @* @{
+                                            var statusClass = eq.status == "Active" ? "bg-green-100 text-green-800" :
+                                            eq.status == "Maintenance" ? "bg-yellow-100 text-yellow-800" :
+                                            eq.status == "Out of Service" ? "bg-red-100 text-red-800" : "bg-gray-100 text-gray-800";
+                                        } *@
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ">
+                                            @eq.status
+                                        </span>
+                                    </td>
+                                   
+                                </tr>
+                                                }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="bg-gray-50 px-6 py-3 flex items-center justify-between border-t border-gray-200">
+                    <div class="text-sm text-gray-500">
+                        Showing <span class="font-medium">@Model.Count</span> equipments
+                    </div>
+                    <!-- Pagination would go here if needed -->
+                </div>
+            
+        </div>
+    </div>
+
+    <script>
+        // Simple confirmation for delete actions
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteButtons = document.querySelectorAll('form[action*="DeleteEquipment"] button');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    if (!confirm('Are you sure you want to delete this equipment?')) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

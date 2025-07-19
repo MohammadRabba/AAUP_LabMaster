@@ -58,7 +58,7 @@ namespace AAUP_LabMaster.Controllers
 
             if (isPartial || Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                return PartialView("_EquipmentTable", equipments.ToList());
+                return PartialView("_EquipmentTableUser", equipments.ToList());
             }
 
             return View(equipments.ToList());
